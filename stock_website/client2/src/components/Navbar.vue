@@ -14,6 +14,7 @@
         <!-- <b-nav-item href="#" disabled>出库</b-nav-item> -->
         <b-nav-item href="out">出库</b-nav-item>
         <b-nav-item href="pending">待发货</b-nav-item>
+        <b-nav-item href="rein">重新入库</b-nav-item>
       </b-navbar-nav>
 
     </b-collapse>

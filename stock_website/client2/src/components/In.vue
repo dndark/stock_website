@@ -98,6 +98,17 @@ var In = {
     }
   },
   computed:{
+    parseURLQuery(){
+      var items = this.QueryStringToObject();
+      console.log(items)
+      if (items && items.itemID){
+        for (var i =0; i < items.itemID.length; i++){
+          var id = items.itemID[i];
+          var number = items.amount[i];
+          this.loadInfo(id, number);
+        }
+      }
+    }
   },
   methods: {
     onDeleteitem(selectItem) {
@@ -107,10 +118,8 @@ var In = {
     },
     edit() {
       this.editing = true
-      // this.$nextTick(() => {
-      // })
     },
-    save: function () {
+    save() {
       this.editing = false
     },
     editLocation(){
@@ -131,11 +140,11 @@ var In = {
       }
       return numOfItemInStock
     },
-    loadInfo(itemID, arr){
+    loadInfo(itemID, number){
       let path = this.site + "item" + "/id/" + itemID
       axios.get(path)
         .then((res) => {
-            res.data.number = arr[itemID]
+            res.data.number = number
             // tempory solution, TODO, I want to modified a stockNumber without realtime display
             res.data.stockNumberTemp = res.data.stockNumber
             this.items.push(res.data);
@@ -149,7 +158,7 @@ var In = {
     submitOrder (){
       var path = this.site +"stocks/"
       var payload = this.items
-      this.updateDate()
+      this.updateDate(payload)
       axios.put(path, payload)
         .then(() => {
           this.dismissCountDown = this.dismissSecs
@@ -161,7 +170,7 @@ var In = {
     
   },
   created(){
-    this.getAllStocks
+    this.parseURLQuery
   },
   mixins: [common]
 }

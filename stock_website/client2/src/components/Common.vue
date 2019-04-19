@@ -37,12 +37,16 @@ export default {
     methods:{
         dateFormat(t){
             // var dateNum =  Date.parse(t);
-            var dateObj = new Date(Number(t));
-            var month = dateObj.getUTCMonth() + 1; //months from 1-12
-            var day = dateObj.getUTCDate();
-            var year = dateObj.getUTCFullYear();
+            if (t){
+                var dateObj = new Date(Number(t));
+                var month = dateObj.getUTCMonth() + 1; //months from 1-12
+                var day = dateObj.getUTCDate();
+                var year = dateObj.getUTCFullYear();
+                
 
-            return  year + "/" + month + "/" + day;
+                return  year + "/" + month + "/" + day;
+            }
+            return ''
         },
         occurrences(arr){
             var counts = {}
@@ -76,8 +80,8 @@ export default {
                     outputArray = outputArray.filter(function(el) { return el; });
                     // console.log(outputArray)
                     var arr = self.occurrences(outputArray)
-                    for (var x of Object.keys(arr)){
-                        self.loadInfo(x, arr)
+                    for (var x in arr){
+                        self.loadInfo(x, arr[x])
                     }
 
                 };//end onload()
@@ -126,11 +130,26 @@ export default {
           return rs;
         },
         
-        updateDate(){
-            for (var i=0; i< this.items.length; i++ ){
-                this.items[i].lastModifiedDate = Date.now()
-                
+        updateDate(items){
+            for (var i=0; i< items.length; i++ ){
+                items[i].lastModifiedDate = Date.now()
             }
+        },
+        ObjectToQueryString(Obj){
+            var queryString = Object.keys(Obj).map(key => key + '=' + Obj[key]).join('&');
+            return queryString
+        },
+        QueryStringToObject(){    
+            var url = location.search; //获取url中"?"符后的字串
+            var theRequest = new Object();
+            if (url.indexOf("?") != -1) {
+                var str = url.substr(1);
+                var strs = str.split("&");
+                for(var i = 0; i < strs.length; i ++) {
+                    theRequest[strs[i].split("=")[0]] = (strs[i].split("=")[1]).split(",");
+                }
+            }
+        return theRequest;
         }
     },
 }

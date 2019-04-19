@@ -2,7 +2,7 @@ from app import app, db
 from .models import Item, ItemOut, PendingDetail, PendingLocation
 from datetime import datetime
 import random
-from flask import jsonify, request, abort
+from flask import jsonify, request, abort, make_response
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import or_
 
@@ -53,6 +53,29 @@ def getItemOut(key,value):
         abort(404)
     return jsonify(result)
 
+
+    
+@app.route('/stocks/type/<t>/<value>', methods=['GET'])
+def stockFilter(t, value):
+    if (t == "id"):
+        obj = Item.id
+    elif (t == "productType"):
+        obj = Item.productType
+    elif (t == "company"):
+        obj = Item.company
+    elif (t == "modelNumber"):
+        obj = Item.modelNumber
+    elif (t == "stockNumber"):
+        obj = Item.stockNumber
+    elif (t == "location"):
+        obj = Item.location
+
+    result = Item.query.filter(obj.like('%{}%'.format(value))).all()
+    
+    for i in range(len(result)):
+        result[i] = result[i].as_dict()
+    return jsonify(items = result)
+
 @app.route('/stocks/', methods=['GET','PUT', 'POST'])
 def stocks():
     if request.method == 'POST':
@@ -77,7 +100,7 @@ def stocks():
         except SQLAlchemyError as e:
             db.session.rollback()
             error = str(e.__dict__['orig'])
-            return jsonify(error)
+            return make_response(jsonify(error), 400)
         items = Item.query.all()
         return jsonify(result= "add success")
     elif request.method == 'PUT':
@@ -101,34 +124,65 @@ def stocks():
             items.append(x.as_dict())
     return jsonify(items = items)
 
-def submit_stock():
-    pass
+@app.route('/pendingLocations', methods=['GET'])
+def pengdingLocations():
+    isExpire = request.args.get('isExpire')
+    isAll = request.args.get('isAll')
+    now = datetime.now()
+
+    result = []
+
+    if isAll:
+        result = PendingLocation.query.all()
+    elif isExpire and isExpire.lower() == 'true':
+        result = PendingLocation.query.filter(PendingLocation.pickupTime <= now).all()
+    elif isExpire  and isExpire.lower() == 'false':
+        result = PendingLocation.query.filter(or_(PendingLocation.pickupTime > now, 
+                                            PendingLocation.pickupTime == None)).all()
+
+    for i in range(len(result)):
+        result[i] = result[i].as_dict()
+    return make_response(jsonify(result))
+
+    
+@app.route('/pendingLocation/<id>', methods=['GET'])
+def pengdingLocation(id):
+    result = PendingLocation.query.filter_by(id=str(id)).first()
+    return make_response(jsonify(result.as_dict()))
 
 
-@app.route('/pendingDetail/', methods=['GET','PUT', 'POST'])
+@app.route('/pendingDetail/<pendingID>', methods=['GET'])
+def getPendingDetail(pendingID):
+    result = PendingDetail.query.filter_by(pending_id=str(pendingID)).all()
+    for i in range(len(result)):
+        result[i] = result[i].as_dict()
+    return make_response(jsonify(result))
+
+
+
+@app.route('/pendingDetail/', methods=['PUT', 'POST'])
 def pending():
     if request.method == 'POST':
         post_data = request.get_json()
         # db.session.rollback()
+        pt = datetime.fromtimestamp(post_data["pickupTime"]/1000)
+        pl = PendingLocation(id=post_data["id"], location=post_data["location"], pickupTime=pt)
         
-        pl = PendingLocation(id=post_data[0]["id"])
-        pl = PendingLocation(id=post_data[0]["location"])
         db.session.add(pl)
-        for x in post_data:
+        for x in post_data["scanItems"]:
             ts = datetime.fromtimestamp(x["lastModifiedDate"]/1000)
-            newobj = PendingDetail(company=x["company"], modelNumber=x["modelNumber"],
+            newobj = PendingDetail(itemID=x["id"], company=x["company"], modelNumber=x["modelNumber"],
                                     lastModifiedDate=ts, info=x["info"],
-                                    amount=x["amount"], productType=x["productType"])
+                                    amount=x["amount"], productType=x["productType"],
+                                    pendingLocation=pl)
             db.session.add(newobj)
-
         try:
-            db.session.commit()
+            result = db.session.commit()
         except SQLAlchemyError as e:
             db.session.rollback()
             error = str(e.__dict__['orig'])
-            return jsonify(error)
-        items = Item.query.all()
-        return jsonify(result= "add success")
+            return make_response(jsonify(error), 400)
+        return make_response(jsonify(result))
     elif request.method == 'PUT':
         post_data = request.get_json()
         for x in post_data:
@@ -139,11 +193,11 @@ def pending():
             newobj.lastModifiedDate = ts
         db.session.commit()
         return jsonify(result= "update success")
-    elif request.method == 'GET':
-        items = []
-        for pd in PendingDetail.query.all():
-            item = pd.as_dict()
-            # item["pendingID"] = pd.pendingLocation.id
-            item["location"] = pd.pendingLocation.location
-            items.append(item)
+    # elif request.method == 'GET':
+    #     items = []
+    #     for pd in PendingDetail.query.all():
+    #         item = pd.as_dict()
+    #         # item["pendingID"] = pd.pendingLocation.id
+    #         item["location"] = pd.pendingLocation.location
+    #         items.append(item)
     return jsonify(items = items)

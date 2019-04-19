@@ -6,12 +6,16 @@ class parent():
     def as_dict(self):
         result = {}
         for c in self.__table__.columns:
-            if c.name == "lastModifiedDate":
+            if c.name == "lastModifiedDate" or c.name == "pickupTime":
                 epoch = datetime.datetime.utcfromtimestamp(0)
                 # mysql_time_struct = time.strptime(getattr(self, c.name), '%Y-%m-%d %H:%M:%S')
                 if getattr(self, c.name) != None:
                     result[c.name] = (getattr(self, c.name) - epoch).total_seconds() * 1000.0
-                
+            
+            elif isinstance(c.type, db.Numeric):
+                # c.type.asdecimal = False
+                result[c.name] = float(getattr(self, c.name))
+             
             else:
                 result[c.name] =  getattr(self, c.name) 
         return result
@@ -49,7 +53,8 @@ class PendingDetail(db.Model,parent):
     __tablename__ = 'Pending_detail'
      
    
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    itemID = db.Column(db.String(320),  nullable=False)
     company = db.Column(db.String(320),  nullable=False)
     modelNumber = db.Column(db.String(320), nullable=False)
     productType = db.Column(db.String(320), nullable=False)
@@ -67,8 +72,9 @@ class PendingDetail(db.Model,parent):
 class PendingLocation(db.Model,parent):
     __tablename__ = 'pending_location'
     #出库单号
-    id = db.Column(db.String(11), primary_key=True)
+    id = db.Column(db.String(60), primary_key=True)
     location = db.Column(db.String(80))
+    pickupTime = db.Column(db.DateTime)
 
    
 

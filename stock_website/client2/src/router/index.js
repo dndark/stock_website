@@ -5,6 +5,7 @@ import In from "@/components/in"
 import Overview from "@/components/Overview"
 import Out from "@/components/Out"
 import Pending from "@/components/Pending"
+import ReIn from "@/components/ReIn"
 
 Vue.use(Router)
 
@@ -35,7 +36,11 @@ export default new Router({
       name: 'Pending',
       component: Pending
     },
-    
+    {
+      path: '/reIn',
+      name: 'ReIn',
+      component: ReIn
+    },
   ],
   mode: 'history',
 })
