@@ -144,7 +144,7 @@ var Out = {
   name:"Out",
   data(){
     return {
-      serialVal: "20171219-004CK",
+      serialVal:'',
       hasError:false,
       outState:{
         state:"pending",
