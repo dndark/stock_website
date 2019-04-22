@@ -36,7 +36,7 @@
         </div>
       </div>
       <div v-else class="col-md-12">
-        <h1> {{this.hashVal}} </h1>
+        <h1> {{decodeURI(this.hashVal)}} </h1>
         <b-table striped hover :items="productInfo" :fields="fields2">
         </b-table>
       </div>
@@ -111,6 +111,7 @@ var ReIn = {
     },
     hashVal() {
       // 我们很快就会看到 `params` 是什么
+      console.log(decodeURI(this.$route.hash.substring(1)))
       return this.$route.hash.substring(1);
     }
   },

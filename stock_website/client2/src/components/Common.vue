@@ -149,7 +149,7 @@ export default {
                     theRequest[strs[i].split("=")[0]] = (strs[i].split("=")[1]).split(",");
                 }
             }
-        return theRequest;
+            return theRequest;
         }
     },
 }

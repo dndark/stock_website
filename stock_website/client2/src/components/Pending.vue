@@ -13,7 +13,7 @@
                   <b-form-input id="input-serial" size="md" placeholder="输入部分关键字" v-model="keyword"></b-form-input>
               </b-col>
               <b-col sm="2">
-                  <b-button class="btn-md btn-circle float-right" variant="success" @click="getKeywordInfo()">查找</b-button>
+                  <b-button class="btn-md btn-circle float-right" variant="success" @click="getPendingItems(keyword)">查找</b-button>
               </b-col>
               <b-col sm="2">
                   <b-button class="btn-md btn-circle" variant="warning" @click="clear()">清空</b-button>
@@ -49,7 +49,7 @@
         </div>
       </div>
       <div v-else class="col-md-12">
-        <h1> {{this.hashVal}} </h1>
+        <h1> {{decodeURI(this.hashVal)}} </h1>
         <b-table striped hover :items="productInfo" :fields="fields2">
         </b-table>
       </div>
@@ -122,13 +122,16 @@ var Pending = {
       return this.items.length
     },
     hashVal() {
-      // 我们很快就会看到 `params` 是什么
       return this.$route.hash.substring(1);
     }
   },
   methods:{
-    getPendingItems(){
-      var URL = this.site + "pendingLocations?isExpire=false";
+    getPendingItems(keyword){
+      this.clearUp()
+
+      var val = (keyword) ? ("&" + this.selected + "=" + keyword) :("")
+      var URL = this.site + "pendingLocations?isExpire=false" + val;
+      
       axios.get(URL)
         .then((res) => {
           this.items = res.data
@@ -138,6 +141,8 @@ var Pending = {
       });
     },
     getProductInfo(hashVal){
+      // set to empty before load up
+      this.clearUp()
       var URL = this.site + "pendingDetail/" + hashVal;
       axios.get(URL)
         .then((res) => {
@@ -147,10 +152,13 @@ var Pending = {
           console.log(error);
       });
     },
-    // getKeywordInfo(){
-    //   var path = this.site + "stocks/type/" + this.selected + "/" + this.keyword ;
-    //   this.getOverviewItems(path)
-    // },
+    clear(){
+      this.getPendingItems()
+    },
+    clearUp(){
+      this.productInfo = []
+      this.items = []
+    }
   },
   created(){
     if (!this.hashVal){

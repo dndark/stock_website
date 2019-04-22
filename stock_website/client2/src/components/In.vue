@@ -74,7 +74,7 @@
           </tbody>
         </table>
         
-      <button id = "subButton" type="button" class="float-right btn btn-success btn-lg"   @click="submitOrder()">提交</button>
+      <button id = "subButton" type="button" class="float-right btn btn-success btn-lg" @click="submitOrder()">提交</button>
              
       </div>
       

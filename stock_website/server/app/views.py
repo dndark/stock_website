@@ -133,13 +133,21 @@ def pengdingLocations():
     result = []
 
     if isAll:
-        result = PendingLocation.query.all()
+        result = PendingLocation.query
     elif isExpire and isExpire.lower() == 'true':
-        result = PendingLocation.query.filter(PendingLocation.pickupTime <= now).all()
+        result = PendingLocation.query.filter(PendingLocation.pickupTime <= now)
     elif isExpire  and isExpire.lower() == 'false':
         result = PendingLocation.query.filter(or_(PendingLocation.pickupTime > now, 
-                                            PendingLocation.pickupTime == None)).all()
+                                            PendingLocation.pickupTime == None))
+    
+    id_number_val = request.args.get('id_number')
+    location_val = request.args.get('location')
+    if id_number_val:
+        result = result.filter(PendingLocation.id.like('%{}%'.format(id_number_val)))
+    if location_val:
+        result = result.filter(PendingLocation.location.like('%{}%'.format(location_val)))
 
+    result = result.all()
     for i in range(len(result)):
         result[i] = result[i].as_dict()
     return make_response(jsonify(result))
@@ -157,8 +165,6 @@ def getPendingDetail(pendingID):
     for i in range(len(result)):
         result[i] = result[i].as_dict()
     return make_response(jsonify(result))
-
-
 
 @app.route('/pendingDetail/', methods=['PUT', 'POST'])
 def pending():

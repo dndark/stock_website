@@ -199,6 +199,8 @@ var Out = {
       this.$refs.pathClear.value ='';
       this.hasError = false;
       this.fields.amount.label ='应出库数量';
+      this.scanItems = [];
+      this.items = [];
     },
     getSerialInfo(){
       // input check
@@ -286,7 +288,8 @@ var Out = {
     warningMsg(item){
       if (item.stockNumber < item.amount) return item.warning = "库房缺货"
       else if (item.remain > 0) return item.warning = "需要" + (item.remain+item.amount)+ ",缺" + item.remain +"个"
-      else return item.warning = "√"
+      else if (item.remain == 0) return item.warning = "√"
+      else return item.warning = "需要" + (item.remain+item.amount)+ ",多" + Math.abs(item.remain) +"个"
     },
     rowClass(item) {
       if (!item) return 'table-danger'
@@ -294,6 +297,7 @@ var Out = {
       else if (item.stockNumber < item.amount) {this.hasError=true; return 'table-danger'}
       else if (item.remain == 0) return 'table-success'
       else if (item.remain < item.amount) return 'table-warning'
+      else if (item.remain > item.amount) return 'table-warning'
       else return 'table-info'
     },
     updateStockInfo(){
