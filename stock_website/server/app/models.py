@@ -77,12 +77,70 @@ class PendingLocation(db.Model,parent):
     pickupTime = db.Column(db.DateTime)
 
    
+class SaleC(db.Model, parent):
+    __tablename__ = 'sale_c'
+    __bind_key__ = 'DB2019'
+    sc_id = db.Column(db.String(60), primary_key=True)
+    sc_code = db.Column(db.String(50))
+    sc_sign_date = db.Column(db.DateTime) 
+    sc_appd_date = db.Column(db.DateTime) 
+    sc_ship_period = db.Column(db.Integer) 
+    sc_item_in = db.Column(db.DECIMAL(11,1))
+    sc_item_out = db.Column(db.DECIMAL(11,1))
+    sc_receive_company = db.Column(db.String(50))
+    sc_sponsor =  db.Column(db.String(50))
+    sc_item_summoney = db.Column(db.DECIMAL(11,1))
 
+    sc_reca_money = db.Column(db.DECIMAL(11,1))
+    sc_recr_money = db.Column(db.DECIMAL(11,1))
+
+class ItemIn(db.Model, parent):
+    __tablename__ = 'item_in'
+    __bind_key__ = 'ItemStorage'
+    in_id = db.Column(db.String(60), primary_key=True)
+    sc_code = db.Column(db.String(50))
+    in_arrive_date = db.Column(db.DateTime)
+    
+    in_item_brand1 = db.Column(db.String(50))  #13入库产品品牌1 
+    in_item_name1 = db.Column(db.String(50))    #14入库产品名称1 
+    in_item_model1 = db.Column(db.String(120))	#15入库产品型号1  
+    in_item_parameter1 = db.Column(db.String(50))	#16规格参数1  
+    in_item_number1 = db.Column(db.Integer) #17入库产品数量1
+    in_item_price1 =  db.Column(db.DECIMAL(8,2))	#18入库产品单价1
+    
+    in_item_brand2 = db.Column(db.String(50))  #13入库产品品牌1 
+    in_item_name2 = db.Column(db.String(50))    #14入库产品名称1 
+    in_item_model2 = db.Column(db.String(120))	#15入库产品型号1  
+    in_item_parameter2 = db.Column(db.String(50))	#16规格参数1  
+    in_item_number2 = db.Column(db.Integer) #17入库产品数量1
+    in_item_price2 =  db.Column(db.DECIMAL(8,2))	#18入库产品单价1
+
+
+    in_item_brand3 = db.Column(db.String(50))  #13入库产品品牌1 
+    in_item_name3 = db.Column(db.String(50))    #14入库产品名称1 
+    in_item_model3 = db.Column(db.String(120))	#15入库产品型号1  
+    in_item_parameter3 = db.Column(db.String(50))	#16规格参数1  
+    in_item_number3 = db.Column(db.Integer) #17入库产品数量1
+    in_item_price3 =  db.Column(db.DECIMAL(8,2))	#18入库产品单价1
+    
+    in_item_brand4 = db.Column(db.String(50))  #13入库产品品牌1 
+    in_item_name4 = db.Column(db.String(50))    #14入库产品名称1 
+    in_item_model4 = db.Column(db.String(120))	#15入库产品型号1  
+    in_item_parameter4 = db.Column(db.String(50))	#16规格参数1  
+    in_item_number4 = db.Column(db.Integer) #17入库产品数量1
+    in_item_price4 =  db.Column(db.DECIMAL(8,2))	#18入库产品单价1
+
+    in_item_brand5 = db.Column(db.String(50))  #13入库产品品牌1 
+    in_item_name5 = db.Column(db.String(50))    #14入库产品名称1 
+    in_item_model5 = db.Column(db.String(120))	#15入库产品型号1  
+    in_item_parameter5 = db.Column(db.String(50))	#16规格参数1  
+    in_item_number5 = db.Column(db.Integer) #17入库产品数量1
+    in_item_price5 =  db.Column(db.DECIMAL(8,2))	#18入库产品单价1
 
 class ItemOut(db.Model,parent):
     __bind_key__ = 'ItemStorage'
     __tablename__ = 'item_out'
-
+    
     out_id = db.Column(db.String(11), primary_key=True)
     out_page_number = db.Column(db.Integer)
     out_code = db.Column(db.String(50))

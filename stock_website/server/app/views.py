@@ -1,10 +1,11 @@
 from app import app, db
-from .models import Item, ItemOut, PendingDetail, PendingLocation
-from datetime import datetime
+from .models import Item, ItemOut, ItemIn, SaleC, PendingDetail, PendingLocation
+from datetime import datetime, timedelta
+
 import random
 from flask import jsonify, request, abort, make_response
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 
 # item is NEW DATABASE
 # itemOut is the OLD DATABASE
@@ -110,11 +111,6 @@ def stocks():
             ts = datetime.fromtimestamp(x["lastModifiedDate"]/1000)
             newobj = Item.query.filter_by(id=str(x["id"])).first()
             newobj.stockNumber = x["stockNumber"]
-            # newobj.company = x["company"]
-            # newobj.info = x["info"]
-            # newobj.location = x["location"]
-            # newobj.modelNumber = x["modelNumber"]
-            # newobj.productType = x["productType"]
             newobj.lastModifiedDate = ts
         db.session.commit()
         return jsonify(result= "update success")
@@ -199,11 +195,65 @@ def pending():
             newobj.lastModifiedDate = ts
         db.session.commit()
         return jsonify(result= "update success")
-    # elif request.method == 'GET':
-    #     items = []
-    #     for pd in PendingDetail.query.all():
-    #         item = pd.as_dict()
-    #         # item["pendingID"] = pd.pendingLocation.id
-    #         item["location"] = pd.pendingLocation.location
-    #         items.append(item)
     return jsonify(items = items)
+
+
+#####Overdue Item
+@app.route('/OverDueItem', methods=['GET'])
+def OverDueItem():
+    result = []
+    now = created_at = datetime.now().date()
+    _90DayAgo = now - timedelta(days=90)
+    # fromDate = datetime.strftime(_90DayAgo, '%Y-%m-%d')
+    items = SaleC.query.filter(and_(SaleC.sc_appd_date <= _90DayAgo, 
+                                    SaleC.sc_item_in > 99, 
+                                    SaleC.sc_item_out < 99, 
+                                    SaleC.sc_receive_company != "北京康瑞明科技有限公司")).all()
+ 
+    for i in range(len(items)):
+        items[i] = items[i].as_dict()
+        # use sc_rec_money to replace sc_reca_money and sc_recr_money
+        items[i]["sc_rec_money"] = items[i]["sc_reca_money"] + items[i]["sc_recr_money"]
+        if (items[i]["sc_item_summoney"] == 0):
+            items[i]["sc_recr_money_prec"] = 0
+        else:
+            items[i]["sc_recr_money_prec"] = items[i]["sc_rec_money"]/(items[i]["sc_item_summoney"])
+        items[i].pop("sc_reca_money")
+        items[i].pop("sc_recr_money")
+    # return make_response(jsonify(items))
+    return make_response(jsonify(items))
+
+@app.route('/unPayItem', methods=['GET'])
+def unPayItem():
+    # optional argument 
+    year = request.args.get('year')
+    if year == "2018":
+        SaleC.__bind_key__ = 'DB2018'
+        print(SaleC.__bind_key__)
+        print(SaleC.__dict__)
+
+    result = []
+    now = datetime.now().date()
+    _60DaysAgo = now - timedelta(days=60)
+    items = SaleC.query.filter(and_(SaleC.sc_reca_money+ SaleC.sc_recr_money < SaleC.sc_item_summoney,
+                                     SaleC.sc_item_out >= 99, 
+                                     SaleC.sc_appd_date < _60DaysAgo ,
+                                    SaleC.sc_receive_company != "北京康瑞明科技有限公司")).all()
+ 
+    for i in range(len(items)):
+        items[i] = items[i].as_dict()
+        items[i]["sc_rec_money"] = items[i]["sc_reca_money"] + items[i]["sc_recr_money"]
+        if (items[i]["sc_item_summoney"] == 0):
+            sc_recr_money_prec = 0
+        else:
+            sc_recr_money_prec = items[i]["sc_rec_money"]/(items[i]["sc_item_summoney"])
+        if sc_recr_money_prec > 0.93:
+            items[i] = None
+        else:
+            
+            items[i]["sc_recr_money_prec"] = sc_recr_money_prec
+            items[i].pop("sc_reca_money")
+            items[i].pop("sc_recr_money")
+    items=list(filter(None, items))
+    # return make_response(jsonify(items))
+    return make_response(jsonify(items))
