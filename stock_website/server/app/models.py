@@ -91,8 +91,8 @@ class SaleC2018(db2018.Model, SaleCParent):
     db= db2018
 
 
-class SaleC2017(db2018.Model, SaleCParent):
-    __bind_key__ = 'DB2018'
+class SaleC2017(db2017.Model, SaleCParent):
+    __bind_key__ = 'DB2017'
     __tablename__ = 'sale_c'  
     #this should matter we should just import db.Column directly
     db= db2018
