@@ -8,13 +8,12 @@
     <b-collapse is-nav id="nav_collapse">
       <b-navbar-nav>
         
-        <b-nav-item href="/">统计</b-nav-item>
-        <b-nav-item href="new">新货输入</b-nav-item>
+        <b-nav-item href="/">超过3月未提货</b-nav-item>
+        <!-- <b-nav-item href="new">新货输入</b-nav-item>
         <b-nav-item href="in">入库</b-nav-item>
-        <!-- <b-nav-item href="#" disabled>出库</b-nav-item> -->
         <b-nav-item href="out">出库</b-nav-item>
         <b-nav-item href="pending">待发货</b-nav-item>
-        <b-nav-item href="rein">重新入库</b-nav-item>
+        <b-nav-item href="rein">重新入库</b-nav-item> -->
       </b-navbar-nav>
 
     </b-collapse>

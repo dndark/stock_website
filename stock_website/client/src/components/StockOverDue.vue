@@ -2,10 +2,24 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12">
+        
         <h1>销售合同</h1>
 
-        <p>日期：{{ this.today}}   </p>
-        <p>货物已经全部入库，提货期超过三个月还未提货的销售合同</p>
+        <!-- <b-container> -->
+          <p>日期：{{ this.today}}  </p>  
+          
+        <!-- <b-row>
+          <b-col> -->
+            <p class="col-md-">货物已经全部入库，提货期超过三个月还未提货的销售合同</p>
+          <!-- </b-col>
+          <b-col> -->
+            <div>
+              <b-form-select v-model="yearSelected" :options="yearOptions" @change=changeYear(yearSelected) class="col-md-1"></b-form-select>
+            </div>
+          <!-- </b-col>
+        </b-row>
+        
+        </b-container> -->
         <br>
         <b-table striped hover 
           :items="items" 
@@ -20,14 +34,17 @@
           <template slot="sc_appd_date" slot-scope="data" >
             {{ dateFormat(data.item.sc_appd_date) }}
           </template>
-          <template slot="sc_recr_money_prec" slot-scope="data">
-            {{ data.item.sc_recr_money_prec * 100 + "%"}}
+          <template slot="sc_rec_money" slot-scope="data">
+            {{ numFormat(data.item.sc_rec_money) }}
           </template>
+          <template slot="sc_recr_money_prec" slot-scope="data">
+            {{ precentFormat(data.item.sc_recr_money_prec * 100)}}
+          </template> 
           <template slot="sc_item_in" slot-scope="data">
-            {{ data.item.sc_item_in + "%" }}
+            {{ precentFormat(data.item.sc_item_in)}}
           </template>
           <template slot="sc_item_out" slot-scope="data">
-            {{ data.item.sc_item_out + "%" }}
+            {{ precentFormat(data.item.sc_item_out) }}
           </template>
         </b-table>
         <div class="overflow-auto">
@@ -53,6 +70,11 @@ var StockOverDue = {
   name:"StockOverDue",
   data(){
     return {
+      yearSelected: 2019,
+      yearOptions: [
+        { value: 2019, text: '2019' },
+        { value: 2018, text: '2018' },
+      ],
       perPage: 15,
       currentPage: 1,
       items:[],
@@ -113,8 +135,8 @@ var StockOverDue = {
     }
   },
   methods:{
-    getItems(){
-      var URL = this.site + "OverDueItem";
+    getItems(year="2019"){
+      var URL = this.site + "OverDueItem?year="+ year;
       axios.get(URL)
         .then((res) => {
           this.items = res.data
@@ -158,6 +180,19 @@ var StockOverDue = {
       }
       return ''
     },
+    numFormat(value){
+      let realVal = parseFloat(value).toFixed(0)
+      return realVal
+    },
+    precentFormat(value){
+      // let realVal = this.numFormat(value) + "%"
+      let realVal = parseFloat(value).toFixed(2) +"%"
+      return realVal
+    },
+    changeYear(value){
+      this.getItems(value)
+      
+    }
   },
   created(){
     this.getItems()

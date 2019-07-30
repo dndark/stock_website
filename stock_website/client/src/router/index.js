@@ -11,11 +11,31 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
-    {
-      path: '/new',
-      name: 'New',
-      component: New
-    },
+    // {
+    //   path: '/new',
+    //   name: 'New',
+    //   component: New
+    // },
+    // {
+    //   path: '/in',
+    //   name: 'In',
+    //   component: In
+    // },
+    // {
+    //   path: '/out',
+    //   name: 'Out',
+    //   component: Out
+    // },
+    // {
+    //   path: '/pending',
+    //   name: 'Pending',
+    //   component: Pending
+    // },
+    // {
+    //   path: '/reIn',
+    //   name: 'ReIn',
+    //   component: ReIn
+    // },
     // {
     //   path: '/',
     //   name: 'Overview',
@@ -25,26 +45,6 @@ export default new Router({
       path: '/',
       name: 'StockOverDue',
       component: StockOverDue
-    },
-    {
-      path: '/in',
-      name: 'In',
-      component: In
-    },
-    {
-      path: '/out',
-      name: 'Out',
-      component: Out
-    },
-    {
-      path: '/pending',
-      name: 'Pending',
-      component: Pending
-    },
-    {
-      path: '/reIn',
-      name: 'ReIn',
-      component: ReIn
     },
   ],
   mode: 'history',
