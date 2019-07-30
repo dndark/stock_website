@@ -17,5 +17,9 @@ app.config.from_object(config["default"])
 # app.config.from_object(config["ItemStorage"])
 SQLAlchemy
 db = SQLAlchemy(app)
+# db2019 = SQLAlchemy(app)
 
+# 2018
+db2018 = SQLAlchemy(app)
+db2017 = SQLAlchemy(app)
 from app import models,views
