@@ -1,4 +1,4 @@
-from app import db #db是在app/__init__.py生成的关联后的SQLAlchemy实例
+from app import db,db2018,db2017 #db是在app/__init__.py生成的关联后的SQLAlchemy实例
 import datetime
 from sqlalchemy.sql.sqltypes import DECIMAL
 from sqlalchemy.orm import relationship,backref
@@ -36,18 +36,6 @@ class Item(db.Model,parent):
     def __repr__(self):
         return '<{}, {}, {},>'.format(self.id, self.company, self.modelNumber)
 
-    # def as_dict(self):
-    #     result = {}
-    #     for c in self.__table__.columns:
-    #         if c.name == "lastModifiedDate":
-    #             epoch = datetime.datetime.utcfromtimestamp(0)
-    #             # mysql_time_struct = time.strptime(getattr(self, c.name), '%Y-%m-%d %H:%M:%S')
-    #             if getattr(self, c.name) != None:
-    #                 result[c.name] = (getattr(self, c.name) - epoch).total_seconds() * 1000.0
-                
-    #         else:
-    #             result[c.name] =  getattr(self, c.name) 
-    #     return result
     
 class PendingDetail(db.Model,parent):
     __tablename__ = 'Pending_detail'
@@ -75,11 +63,8 @@ class PendingLocation(db.Model,parent):
     id = db.Column(db.String(60), primary_key=True)
     location = db.Column(db.String(80))
     pickupTime = db.Column(db.DateTime)
-
    
-class SaleC(db.Model, parent):
-    __tablename__ = 'sale_c'
-    __bind_key__ = 'DB2019'
+class SaleCParent(parent):
     sc_id = db.Column(db.String(60), primary_key=True)
     sc_code = db.Column(db.String(50))
     sc_sign_date = db.Column(db.DateTime) 
@@ -90,9 +75,28 @@ class SaleC(db.Model, parent):
     sc_receive_company = db.Column(db.String(50))
     sc_sponsor =  db.Column(db.String(50))
     sc_item_summoney = db.Column(db.DECIMAL(11,1))
-
     sc_reca_money = db.Column(db.DECIMAL(11,1))
     sc_recr_money = db.Column(db.DECIMAL(11,1))
+
+class SaleC(db.Model,SaleCParent):
+    __tablename__ = 'sale_c'
+    __bind_key__ = 'DB2019'
+    #this should matter we should just import db.Column directly
+    db = db
+
+class SaleC2018(db2018.Model, SaleCParent):
+    __bind_key__ = 'DB2018'
+    __tablename__ = 'sale_c'  
+    #this should matter we should just import db.Column directly
+    db= db2018
+
+
+class SaleC2017(db2018.Model, SaleCParent):
+    __bind_key__ = 'DB2018'
+    __tablename__ = 'sale_c'  
+    #this should matter we should just import db.Column directly
+    db= db2018
+
 
 class ItemIn(db.Model, parent):
     __tablename__ = 'item_in'
