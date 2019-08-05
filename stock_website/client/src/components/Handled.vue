@@ -2,24 +2,20 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        
-        <h1>销售合同</h1>
+        <h1 style="color: #00FF99"><b>已处理</b></h1>
 
-        <!-- <b-container> -->
-          <p>日期：{{ this.today}}  </p>  
-          
-        <!-- <b-row>
-          <b-col> -->
-            <p class="col-md-">货物已经全部入库，提货期超过三个月还未提货的销售合同</p>
-          <!-- </b-col>
-          <b-col> -->
-            <div>
-              <b-form-select v-model="yearSelected" :options="yearOptions" @change=changeYear(yearSelected) class="col-md-1"></b-form-select>
-            </div>
-          <!-- </b-col>
-        </b-row>
-        
-        </b-container> -->
+        <b-container class="bv-example-row">
+            <b-row>
+                <b-col>             
+                    <p>年份:</p>
+                    <b-form-select v-model="yearSelected" :options="yearOptions" @change=reloadItem class="col-md-5"></b-form-select>
+                </b-col>
+                <b-col>
+                    <p>姓名:</p>
+                    <b-form-select v-model="nameSelected" :options="nameOptions2" @change=reloadItem class="col-md-5"></b-form-select>
+                </b-col>
+            </b-row>
+        </b-container>
         <br>
         <b-table striped hover 
           :items="items" 
@@ -31,9 +27,8 @@
           :outlined = true
           :sort-compare="sortDate"
           >
-          
           <template slot="sc_code" slot-scope="data" >
-              <a :title="data.item.sc_code">
+              <a :title="data.item.sc_code" :href="'unPayDetail?sc_code='+data.item.sc_code">
                 {{data.item.sc_code.slice(0,18) }}
               </a>
           </template>
@@ -55,6 +50,9 @@
           <template slot="sc_item_out" slot-scope="data">
             {{ precentFormat(data.item.sc_item_out) }}
           </template>
+          <template slot="last_modified_date" slot-scope="data">
+            {{ dateFormat2(data.item.last_modified_date) }}
+          </template>
         </b-table>
         <div class="overflow-auto">
             <b-pagination
@@ -62,7 +60,7 @@
               v-model="currentPage"
               :total-rows="rows"
               :per-page="perPage"
-              aria-controls=" "
+              aria-controls=""
             />
         </div>
       </div>
@@ -72,18 +70,13 @@
 
 <script>
 
-import common from '@/components/Common'
+import UnpayCommon from '@/components/UnpayCommon'
 import axios from 'axios'
 
-var StockOverDue = {
-  name:"StockOverDue",
+var Handled = {
+  name:"Handled",
   data(){
     return {
-      // yearSelected: 2019,
-      // nameSelected:"所有人",
-      perPage: 15,
-      currentPage: 1,
-      items:[],
       fields: {
         id: {
           key: "sc_code",
@@ -104,106 +97,63 @@ var StockOverDue = {
           label: '收款情况',
           sortable:true,
         },
-        rec_money:{
-          key: "sc_rec_money",
-          label:'已收金额',
-          sortable:true,
-        },
         item_summoney:{
           key: "sc_item_summoney",
           label:'销售金额',
-          sortable:true,
-        },
-        item_in:{
-          key: "sc_item_in",
-          label:'入库',
-          sortable:true,
-        },
-        item_out:{
-          key: "sc_item_out",
-          label:'出库',
           sortable:true,
         },
         sponsor:{
           key: "sc_sponsor",
           label:'主管人',
           sortable:true,
+        },
+        last_modified_date:{
+          key: "last_modified_date",
+          label:'处理日期',
+          sortable:true,
         }
       },
     }
   },
-  computed:{
-    rows(){
-      return this.items.length
-    },
-    today(){
-      return this.dateFormat(new Date())
-    }
-  },
   methods:{
-    getItems(year="2019"){
-      var URL = this.site + "OverDueItem?year="+ year;
-      axios.get(URL)
+    getItems(options){
+      var url = this.site + "unPayItems?";
+      var options = options||{}
+      if ("year" in options){url += 'year='+options.year+"&"}
+      if ("name" in options){url += 'name='+options.name+"&"}
+      url += "handled=yes&"
+      
+      self = this
+      axios.get(url)
         .then((res) => {
-          this.items = res.data
+          self.items = res.data
+          self.currentPage = 1
         })
         .catch((error) => {
           console.log(error);
       });
     },
-    toString(value) {
-      if (!value) {
-        return ''
-      } else if (value instanceof Object) {
-        return keys(value)
-          .sort()
-          .map(key => toString(value[key]))
-          .join(' ')
-      }
-      return String(value)
-    },  
-    sortDate(a, b, key) {
-      if (typeof a[key] === 'number' && typeof b[key] === 'number') {
-        // If both compared fields are native numbers
-        return a[key] < b[key] ? -1 : a[key] > b[key] ? 1 : 0
-      } else if (key == 'sc_appd_date') {
-        if (new Date(a[key]) < new Date(b[key])) return 1;
-        if (new Date(a[key]) > new Date(b[key])) return -1;
-      } else{
-        return this.toString(a[key]).localeCompare(this.toString(b[key]), undefined, {
-          numeric: true
-        })
-      }
+    reloadItem(value){
+      this.getItems({year:this.yearSelected, name:this.nameSelected })
     },
-    dateFormat(t){
+    dateFormat2(t){
       // var dateNum =  Date.parse(t);
       if (t){
-          var dateObj = new Date(t);
+          var dateObj = new Date(Number(t));
           var month = dateObj.getUTCMonth() + 1; //months from 1-12
           var day = dateObj.getUTCDate();
           var year = dateObj.getUTCFullYear();
-          return  year + "/" + month + "/" + day;
+          var hour = dateObj.getUTCHours();
+          var min = dateObj.getUTCMinutes();
+          return  year + "/" + month + "/" + day + " " +hour+":"+min;
       }
       return ''
     },
-    numFormat(value){
-      let realVal = parseFloat(value).toFixed(0)
-      return realVal
-    },
-    precentFormat(value){
-      // let realVal = this.numFormat(value) + "%"
-      let realVal = parseFloat(value).toFixed(2) +"%"
-      return realVal
-    },
-    changeYear(value){
-      this.getItems(value)
-      
-    }
   },
   created(){
     this.getItems()
   },
-  mixins: [common]
+  mixins: [UnpayCommon]
 }
-export default StockOverDue
+export default Handled
 </script>

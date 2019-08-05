@@ -1,4 +1,5 @@
 <script>
+
 import axios from 'axios'
 export default {
 
@@ -10,6 +11,7 @@ export default {
             
             dismissSecs: 3,
             dismissCountDown: 0,
+            nameOptions:["所有人","张淑芳","刘伟","李彩霞","韩晓波","任艳红","王婷婷","张艳梅","贾紫娟","常芳萍","李艳茹","徐佳毅","李国栋","张银芳","张海燕","春桥科技"],
             fileInit:{
                 
                 id: {
@@ -38,12 +40,11 @@ export default {
         dateFormat(t){
             // var dateNum =  Date.parse(t);
             if (t){
-                var dateObj = new Date(Number(t));
+                var dateObj = new Date(t);
                 var month = dateObj.getUTCMonth() + 1; //months from 1-12
                 var day = dateObj.getUTCDate();
                 var year = dateObj.getUTCFullYear();
-                
-
+                console.log(dateObj)
                 return  year + "/" + month + "/" + day;
             }
             return ''
@@ -150,7 +151,15 @@ export default {
                 }
             }
             return theRequest;
-        }
+        },
+        numFormat(value){
+            let realVal = parseFloat(value).toFixed(0)
+            return realVal
+        },
+        precentFormat(value){
+            let realVal = parseFloat(value).toFixed(2) +"%"
+            return realVal
+        },
     },
 }
 </script>

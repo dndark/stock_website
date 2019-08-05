@@ -9,6 +9,9 @@
       <b-navbar-nav>
         
         <b-nav-item href="/">超过3月未提货</b-nav-item>
+        <b-nav-item href="unPay">未付款</b-nav-item>
+        <b-nav-item href="inProgress">处理中</b-nav-item>
+        <b-nav-item href="handled">已处理</b-nav-item>
         <!-- <b-nav-item href="new">新货输入</b-nav-item>
         <b-nav-item href="in">入库</b-nav-item>
         <b-nav-item href="out">出库</b-nav-item>
