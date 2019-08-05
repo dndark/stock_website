@@ -175,9 +175,9 @@ var UnPay = {
       this.getItems({year:this.yearSelected, name:this.nameSelected })
     },
   },
-  created(){
-    this.getItems()
-  },
+  // created(){
+  //   this.getItems()
+  // },
   mixins: [UnpayCommon]
 }
 export default UnPay

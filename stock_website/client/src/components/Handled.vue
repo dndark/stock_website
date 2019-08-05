@@ -148,13 +148,10 @@ var Handled = {
           var year = dateObj.getUTCFullYear();
           var hour = dateObj.getUTCHours();
           var min = dateObj.getUTCMinutes();
-          return  year + "/" + month + "/" + day + " " +hour+":"+min;
+          return  year + "/" + month + "/" + day + " " + hour + ":" + min;
       }
       return ''
     },
-  },
-  created(){
-    this.getItems()
   },
   mixins: [UnpayCommon]
 }

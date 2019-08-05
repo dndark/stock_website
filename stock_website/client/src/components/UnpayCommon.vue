@@ -134,5 +134,8 @@ export default {
             return realVal
         },
     },
+    created(){
+        this.getItems()
+    },
 }
 </script>
