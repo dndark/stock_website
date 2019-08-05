@@ -6,7 +6,7 @@ class parent():
     def as_dict(self):
         result = {}
         for c in self.__table__.columns:
-            if c.name == "lastModifiedDate" or c.name == "pickupTime":
+            if c.name == "lastModifiedDate" or c.name == "pickupTime" or c.name =="last_modified_date":
                 epoch = datetime.datetime.utcfromtimestamp(0)
                 # mysql_time_struct = time.strptime(getattr(self, c.name), '%Y-%m-%d %H:%M:%S')
                 if getattr(self, c.name) != None:
@@ -78,25 +78,67 @@ class SaleCParent(parent):
     sc_reca_money = db.Column(db.DECIMAL(11,1))
     sc_recr_money = db.Column(db.DECIMAL(11,1))
 
+class sale_c_sp(parent):  
+    sc_id = db.Column(db.String(60), primary_key=True)
+    sc_code = db.Column(db.String(50))
+    sc_sign_date = db.Column(db.DateTime) 
+    sc_appd_date = db.Column(db.DateTime) 
+    sc_ship_period = db.Column(db.Integer) 
+    sc_item_in = db.Column(db.DECIMAL(11,1))
+    sc_item_out = db.Column(db.DECIMAL(11,1))
+    sc_receive_company = db.Column(db.String(50))
+    sc_sponsor =  db.Column(db.String(50))
+    sc_item_summoney = db.Column(db.DECIMAL(11,1))
+    sc_reca_money = db.Column(db.DECIMAL(11,1))
+    sc_recr_money = db.Column(db.DECIMAL(11,1))
+    remark = db.Column(db.String(50))
+    # 0 represent not handle yet, 10 represent fully handle
+    # 5 represent still watching
+    handled = db.Column(db.Integer) 
+    # id = db.Column(db.String(60), primary_key=True)
+    
+    sc_code = db.Column(db.String(50))
+
 class SaleC(db.Model,SaleCParent):
     __tablename__ = 'sale_c'
     __bind_key__ = 'DB2019'
-    #this should matter we should just import db.Column directly
-    db = db
+    #this shouldn't matter we should just import db.Column directly
+    # db = db
+    # UnpaySaleStatusParent = relationship("UnpaySaleStatus", order_by="UnpaySaleStatus.sc_code", backref="SaleCParent")
+
 
 class SaleC2018(db2018.Model, SaleCParent):
-    __bind_key__ = 'DB2018'
     __tablename__ = 'sale_c'  
-    #this should matter we should just import db.Column directly
-    db= db2018
-
-
-class SaleC2017(db2018.Model, SaleCParent):
     __bind_key__ = 'DB2018'
-    __tablename__ = 'sale_c'  
-    #this should matter we should just import db.Column directly
-    db= db2018
+    #this shouldn't matter we should just import db.Column directly
+    # db= db2018
 
+class SaleC2017(db2017.Model, SaleCParent):
+    __tablename__ = 'sale_c'  
+    __bind_key__ = 'DB2017'
+
+class UnpaySaleStatusParent(parent):
+    remark = db.Column(db.Text)
+    # 0 represent not handle yet, 10 represent fully handle
+    # 5 represent still watching
+    handled = db.Column(db.Integer) 
+    id = db.Column(db.INT, primary_key=True,nullable=False,autoincrement=True)
+    last_modified_date = db.Column(db.DateTime)
+    sc_code = db.Column(db.String(50))
+    # sc_code = db.Column(db.ForeignKey(u'SaleCParent.sc_code'), index=True)
+    # pendingLocation = relationship(u'PendingLocation',backref=backref('Pending_detail'))
+
+class UnpaySaleStatus(db.Model, UnpaySaleStatusParent):
+    __tablename__ = 'unpay_sale_status'
+    __bind_key__ = 'DB2019'
+
+class UnpaySaleStatus2018(db2018.Model, UnpaySaleStatusParent):
+    __tablename__ = 'unpay_sale_status'
+    __bind_key__ = 'DB2018'
+
+class UnpaySaleStatus2017(db2017.Model, UnpaySaleStatusParent):
+    __tablename__ = 'unpay_sale_status'
+    __bind_key__ = 'DB2017'
 
 class ItemIn(db.Model, parent):
     __tablename__ = 'item_in'

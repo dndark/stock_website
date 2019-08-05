@@ -34,11 +34,11 @@ class DevelopmentConfig(Config):
     """
 
     #可以通过修改SQLALCHEMY_DATABASE_URI来控制访问不同数据库
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost:3306/test?charset=utf8'
+    # SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost:3306/test?charset=utf8'
     SQLALCHEMY_BINDS = {
         'ItemStorage': 'mysql+pymysql://root:root@localhost:3306/run_admin_itemstorage?charset=utf8',
-        'DB2019': 'mysql+pymysql://root:root@localhost:3306/run_admin_db_2019?charset=utf8',
-        'DB2018': 'mysql+pymysql://root:root@localhost:3306/run_admin_db_2018?charset=utf8',
+        'DB2019': 'mysql+pymysql://root:root@localhost:3306/run_admin_2019?charset=utf8',
+        'DB2018': 'mysql+pymysql://root:root@localhost:3306/run_admin_2018?charset=utf8',
     }
     
 
@@ -46,7 +46,12 @@ class ProductionConfig(Config):
     """生产环境
     """
     #可以通过修改SQLALCHEMY_DATABASE_URI来控制访问不同数据库
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@192.168.66.188/production?charset=utf8'
+    # SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:fengjunguo@192.168.1.223:3306/test?charset=utf8'
+    SQLALCHEMY_BINDS = {
+        'ItemStorage': 'mysql+pymysql://root:fengjunguo@192.168.1.223:3306/run_admin_itemstorage?charset=utf8',
+        'DB2019': 'mysql+pymysql://root:fengjunguo@192.168.1.223:3306/run_admin_db_2019?charset=utf8',
+        'DB2018': 'mysql+pymysql://root:fengjunguo@192.168.1.223:3306/run_admin_db_2018?charset=utf8',
+    }
 
 
 # 设置配置映射
