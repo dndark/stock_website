@@ -127,28 +127,15 @@ var InProgress = {
         .then((res) => {
           self.items = res.data
           self.currentPage = 1
+          if (self.onceItems.length == 0){
+            self.onceItems = JSON.parse(JSON.stringify(res.data));
+          }
         })
         .catch((error) => {
           console.log(error);
       });
     },
     // this function call API and update the database
-    postUpdateItem(value){
-      var url = this.site + "updateUnPayItem";
-      var self = this
-      axios.post(url,{
-          handle_score: 10,        
-          sc_code: value.sc_code  
-        })
-        .then((res) => {
-          const index = self.items.findIndex(item => item.sc_code ===  value.sc_code) // find the post index 
-          self.items[index].handle = false
-          self.items.splice(index, 1) //delete the post
-        })
-        .catch((error) => {
-          console.log(error);
-      });
-    },
     reloadItem(value){
       this.getItems({year:this.yearSelected, name:this.nameSelected })
     },

@@ -34,6 +34,9 @@ export default {
             perPage: 15,
             currentPage: 1,
             items:[],
+            // this is copy of items but only render at created
+            onceItems:[],
+            itemCount:[]
         }
     },
     computed:{
@@ -41,17 +44,50 @@ export default {
             return this.items.length
         },
         nameOptions2(){
-            var newList = [{value:"所有人", text:"所有人("+this.items.length+")"}]
+            var newList = [{value:"所有人", text:"所有人("+this.onceItems.length+")"}]
             for (var x of this.nameOptions){
                 if (x.name != "所有人"){
-                var countNumberOfName = this.items.filter(item => item.sc_sponsor === x.value).length;
-                newList.push({value:x.value, text:x.text+"("+countNumberOfName+")"})
+                    var countNumberOfName = this.onceItems.filter(item => item.sc_sponsor === x.value).length;
+                    newList.push({value:x.value, text:x.text+"("+countNumberOfName+")"})
                 }
             }
+            console.log(1)
             return newList
         }
     },
     methods:{
+        // nameOptions2(){
+        //     this.itemCount.push({value:"所有人","text":this.items.length})
+        //     for (var x of this.nameOptions){
+        //         var counNumberOfName = this.items.filter(item => item.sc_sponsor === x.value).length;
+        //         this.itemCount.push({value:x.value, text:x.text+"("+countNumberOfName+")"})
+        //     }
+        //     console.log(itemCount)
+        // },
+        
+        postUpdateItem(value){
+        var url = this.site + "updateUnPayItem";
+        var self = this
+        axios.post(url,{
+                handle_score: 10,        
+                sc_code: value.sc_code  
+            })
+            .then((res) => {
+                let index = self.items.findIndex(item => item.sc_code ===  value.sc_code) // find the post index 
+                if (index != -1){
+                    self.items[index].handle = false
+                    self.items.splice(index, 1) //delete the post
+                }
+                // deleted the item from onceItem
+                index = self.onceItems.findIndex(item => item.sc_code ===  value.sc_code) // find the post index 
+                if (index != -1){
+                    self.onceItems.splice(index, 1) 
+                }
+                })
+                .catch((error) => {
+                    console.log(error);
+            });
+        },
         dateFormat(t){
             if (t){
                 var dateObj = new Date(t);

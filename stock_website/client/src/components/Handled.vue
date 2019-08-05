@@ -128,6 +128,9 @@ var Handled = {
         .then((res) => {
           self.items = res.data
           self.currentPage = 1
+          if (self.onceItems.length == 0){
+            self.onceItems = JSON.parse(JSON.stringify(res.data));
+          }
         })
         .catch((error) => {
           console.log(error);

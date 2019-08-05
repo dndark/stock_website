@@ -138,6 +138,9 @@ var UnPay = {
         .then((res) => {
           self.items = res.data
           self.currentPage = 1
+          if (self.onceItems.length == 0){
+            self.onceItems = JSON.parse(JSON.stringify(res.data));
+          }
         })
         .catch((error) => {
           console.log(error);
@@ -152,9 +155,17 @@ var UnPay = {
           sc_code: value.sc_code  
         })
         .then((res) => {
-          const index = self.items.findIndex(item => item.sc_code ===  value.sc_code) // find the post index 
-          self.items[index].handle = false
-          self.items.splice(index, 1) //delete the post
+          // deleted the item from page
+          let index = self.items.findIndex(item => item.sc_code ===  value.sc_code) // find the post index 
+          if (index != -1){
+            self.items[index].handle = false
+            self.items.splice(index, 1) //delete the post
+          }
+          // deleted the item from onceItem
+          index = self.onceItems.findIndex(item => item.sc_code ===  value.sc_code) // find the post index 
+          if (index != -1){
+            self.onceItems.splice(index, 1) 
+          }
         })
         .catch((error) => {
           console.log(error);
