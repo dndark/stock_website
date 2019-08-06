@@ -4,22 +4,12 @@
       <div class="col-md-12">
         
         <h1>销售合同</h1>
-
-        <!-- <b-container> -->
           <p>日期：{{ this.today}}  </p>  
           
-        <!-- <b-row>
-          <b-col> -->
             <p class="col-md-">货物已经全部入库，提货期超过三个月还未提货的销售合同</p>
-          <!-- </b-col>
-          <b-col> -->
             <div>
               <b-form-select v-model="yearSelected" :options="yearOptions" @change=changeYear(yearSelected) class="col-md-1"></b-form-select>
             </div>
-          <!-- </b-col>
-        </b-row>
-        
-        </b-container> -->
         <br>
         <b-table striped hover 
           :items="items" 
@@ -79,8 +69,12 @@ var StockOverDue = {
   name:"StockOverDue",
   data(){
     return {
-      // yearSelected: 2019,
-      // nameSelected:"所有人",
+      yearSelected: 2019,
+      
+      yearOptions: [
+          2019, 2018
+      ],
+      nameSelected:"所有人",
       perPage: 15,
       currentPage: 1,
       items:[],

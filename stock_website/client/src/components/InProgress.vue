@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <h1 style="color: #FF9933"><b>处理中</b></h1>
+        <h1 style="color: #FF9933">处理中</h1>
 
         <b-container class="bv-example-row">
             <b-row>

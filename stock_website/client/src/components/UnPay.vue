@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <h1 style="color: red"><b>未付款</b></h1>
+        <h1 style="color: red">未付款</h1>
 
         <b-container class="bv-example-row">
             <b-row>
@@ -114,33 +114,27 @@ var UnPay = {
       },
     }
   },
-  computed:{
-    // nameOptions2(){
-    //   var newList = [{value:"所有人", text:"所有人("+this.items.length+")"}]
-    //   for (var x of this.nameOptions){
-    //     if (x.name != "所有人"){
-    //       var countNumberOfName = this.items.filter(item => item.sc_sponsor === x.value).length;
-    //       newList.push({value:x.value, text:x.text+"("+countNumberOfName+")"})
-    //     }
-    //   }
-    //   return newList
-    // }
-  },
   methods:{
-    getItems(options){
+    getItems(){
       var url = this.site + "unPayItems?";
-      var options = options||{}
-      if ("year" in options){url += 'year='+options.year+"&"}
-      if ("name" in options){url += 'name='+options.name+"&"}
+      url += 'year='+this.yearSelected+"&" + 'name='+this.nameSelected
 
-      self = this
+      var self = this
       axios.get(url)
         .then((res) => {
           self.items = res.data
           self.currentPage = 1
-          if (self.onceItems.length == 0){
+          // onceItem need to be corresponding to the correct year, so if nameSelected 
+          // is all, we could just copy the res.data obj to onceItems. if the nameSelected
+          // is not the all, we need to make one more extract API call, to fetch all user information
+          // this may cause redundant call
+          if (self.nameSelected == "所有人"){
             self.onceItems = JSON.parse(JSON.stringify(res.data));
+          }else{
+            url = url.replace(self.nameSelected,"所有人")
+            axios.get(url).then((res)=>{self.onceItems = JSON.parse(JSON.stringify(res.data));})
           }
+          
         })
         .catch((error) => {
           console.log(error);
@@ -172,7 +166,7 @@ var UnPay = {
       });
     },
     reloadItem(value){
-      this.getItems({year:this.yearSelected, name:this.nameSelected })
+      this.getItems()
     },
   },
   // created(){
@@ -182,3 +176,6 @@ var UnPay = {
 }
 export default UnPay
 </script>
+
+<style scoped>
+</style>

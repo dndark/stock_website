@@ -7,13 +7,10 @@ export default {
     data(){
         return{
             site:"/api/",
-            yearOptions: [
-                2019, 2018
-            ],
+            yearOptions: [2019, 2018 ],
             yearSelected: 2019,
             // nameOptions:["所有人","张淑芳","刘伟","李彩霞","韩晓波","任艳红","王婷婷","张艳梅","贾紫娟","常芳萍","李艳茹","徐佳毅","李国栋","张银芳","张海燕","春桥科技"],
             nameOptions:[
-                // {value:"所有人",text:"所有人"},
                 {value:"张淑芳",text:"张淑芳"},
                 {value:"刘伟",text:"刘伟"},
                 {value:"李彩霞",text:"李彩霞"},
@@ -26,7 +23,6 @@ export default {
                 {value:"李国栋",text:"李国栋"},
                 {value:"张银芳",text:"张银芳"},
                 {value:"张海燕",text:"张海燕"},
-                
                 {value:"春桥科技",text:"春桥科技"},
             ],
 
@@ -43,6 +39,30 @@ export default {
         rows(){
             return this.items.length
         },
+        // getItems(){
+        //     var url = this.getUrl
+        //     var self = this
+        //     var a = self.nameSelected
+        //     axios.get(url)
+        //         .then((res) => {
+        //         this.items = res.data
+        //         self.currentPage = 1
+        //         // onceItem need to be corresponding to the correct year, so if nameSelected 
+        //         // is all, we could just copy the res.data obj to onceItems. if the nameSelected
+        //         // is not the all, we need to make one more extract API call, to fetch all user information
+        //         // this may cause redundant call
+        //         if (self.nameSelected == "所有人"){
+        //             self.onceItems = JSON.parse(JSON.stringify(res.data));
+        //         }else{
+        //             url = url.replace(self.nameSelected,"所有人")
+        //             axios.get(url).then((res)=>{self.onceItems = JSON.parse(JSON.stringify(res.data));})
+        //         }
+                
+        //         })
+        //         .catch((error) => {
+        //         console.log(error);
+        //     });
+        // },
         nameOptions2(){
             var newList = [{value:"所有人", text:"所有人("+this.onceItems.length+")"}]
             for (var x of this.nameOptions){
@@ -51,20 +71,10 @@ export default {
                     newList.push({value:x.value, text:x.text+"("+countNumberOfName+")"})
                 }
             }
-            console.log(1)
             return newList
         }
     },
     methods:{
-        // nameOptions2(){
-        //     this.itemCount.push({value:"所有人","text":this.items.length})
-        //     for (var x of this.nameOptions){
-        //         var counNumberOfName = this.items.filter(item => item.sc_sponsor === x.value).length;
-        //         this.itemCount.push({value:x.value, text:x.text+"("+countNumberOfName+")"})
-        //     }
-        //     console.log(itemCount)
-        // },
-        
         postUpdateItem(value){
         var url = this.site + "updateUnPayItem";
         var self = this
@@ -94,8 +104,8 @@ export default {
                 var month = dateObj.getUTCMonth() + 1; //months from 1-12
                 var day = dateObj.getUTCDate();
                 var year = dateObj.getUTCFullYear();
-                //   return  year+"/"+month + '/'+ day;
-                return month +'.'+day;
+                return  year+"/"+month + '/'+ day;
+                // return month +'.'+day;
             }
             return ''
         },

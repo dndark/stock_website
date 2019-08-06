@@ -2,17 +2,17 @@
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <h1 style="color: #00FF99"><b>已处理</b></h1>
+        <h1 style="color: #00FF99">已处理</h1>
 
         <b-container class="bv-example-row">
             <b-row>
                 <b-col>             
                     <p>年份:</p>
-                    <b-form-select v-model="yearSelected" :options="yearOptions" @change=reloadItem class="col-md-5"></b-form-select>
+                    <b-form-select v-model="yearSelected" :options="yearOptions" class="col-md-5"></b-form-select>
                 </b-col>
                 <b-col>
                     <p>姓名:</p>
-                    <b-form-select v-model="nameSelected" :options="nameOptions2" @change=reloadItem class="col-md-5"></b-form-select>
+                    <b-form-select v-model="nameSelected" :options="nameOptions2" class="col-md-5"></b-form-select>
                 </b-col>
             </b-row>
         </b-container>
@@ -116,7 +116,7 @@ var Handled = {
     }
   },
   methods:{
-    getItems(options){
+    getItems(){
       var url = this.site + "unPayItems?";
       var options = options||{}
       if ("year" in options){url += 'year='+options.year+"&"}
@@ -136,9 +136,6 @@ var Handled = {
           console.log(error);
       });
     },
-    reloadItem(value){
-      this.getItems({year:this.yearSelected, name:this.nameSelected })
-    },
     dateFormat2(t){
       // var dateNum =  Date.parse(t);
       if (t){
@@ -157,3 +154,4 @@ var Handled = {
 }
 export default Handled
 </script>
+
