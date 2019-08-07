@@ -8,11 +8,11 @@
             <b-row>
                 <b-col>             
                     <p>年份:</p>
-                    <b-form-select v-model="yearSelected" :options="yearOptions" @change=reloadItem class="col-md-5"></b-form-select>
+                    <b-form-select v-model="yearSelected" :options="yearOptions"  @change=getItems class="col-md-5"></b-form-select>
                 </b-col>
                 <b-col>
                     <p>姓名:</p>
-                    <b-form-select v-model="nameSelected" :options="nameOptions2" @change=reloadItem class="col-md-5"></b-form-select>
+                    <b-form-select v-model="nameSelected" :options="nameOptions2" @change=getItems class="col-md-5"></b-form-select>
                 </b-col>
             </b-row>
         </b-container>
@@ -114,35 +114,12 @@ var InProgress = {
       },
     }
   },
-  methods:{
-    getItems(options){
-      var url = this.site + "unPayItems?";
-      var options = options||{}
-      if ("year" in options){url += 'year='+options.year+"&"}
-      if ("name" in options){url += 'name='+options.name+"&"}
-      url += "progress=yes&"
-
-      self = this
-      axios.get(url)
-        .then((res) => {
-          self.items = res.data
-          self.currentPage = 1
-          if (self.onceItems.length == 0){
-            self.onceItems = JSON.parse(JSON.stringify(res.data));
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-      });
-    },
-    // this function call API and update the database
-    reloadItem(value){
-      this.getItems({year:this.yearSelected, name:this.nameSelected })
-    },
+  computed:{
+    url(){
+      var url = this.site + "unPayItems?"+'year='+this.yearSelected+"&" + 'name='+this.nameSelected + "&progress=yes&"
+      return url
+    }
   },
-  // created(){
-  //   this.getItems()
-  // },
   mixins: [UnpayCommon]
 }
 export default InProgress

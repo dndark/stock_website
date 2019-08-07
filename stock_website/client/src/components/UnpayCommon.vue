@@ -75,10 +75,35 @@ export default {
         }
     },
     methods:{
+        getItems(){
+            console.log(123)
+            // var url = this.site + "unPayItems?";
+            // url += 'year='+this.yearSelected+"&" + 'name='+this.nameSelected
+            var url = this.url
+            var self = this
+            axios.get(url)
+                .then((res) => {
+                self.items = res.data
+                self.currentPage = 1
+                // onceItem need to be corresponding to the correct year, so if nameSelected 
+                // is all, we could just copy the res.data obj to onceItems. if the nameSelected
+                // is not the all, we need to make one more extract API call, to fetch all user information
+                // this may cause redundant call
+                if (self.nameSelected == "所有人"){
+                    self.onceItems = JSON.parse(JSON.stringify(res.data));
+                }else{
+                    url = url.replace(self.nameSelected,"所有人")
+                    axios.get(url).then((res)=>{self.onceItems = JSON.parse(JSON.stringify(res.data));})
+                }
+                })
+                .catch((error) => {
+                    console.log(error);
+            });
+        },
         postUpdateItem(value){
-        var url = this.site + "updateUnPayItem";
-        var self = this
-        axios.post(url,{
+            var url = this.site + "updateUnPayItem";
+            var self = this
+            axios.post(url,{
                 handle_score: 10,        
                 sc_code: value.sc_code  
             })
@@ -96,7 +121,7 @@ export default {
                 })
                 .catch((error) => {
                     console.log(error);
-            });
+                });
         },
         dateFormat(t){
             if (t){
@@ -104,14 +129,12 @@ export default {
                 var month = dateObj.getUTCMonth() + 1; //months from 1-12
                 var day = dateObj.getUTCDate();
                 var year = dateObj.getUTCFullYear();
-                return  year+"/"+month + '/'+ day;
-                // return month +'.'+day;
+                return  year + "/" + month + '/'+ day;
             }
             return ''
         },
         toString(value) {
-            if (!value) {
-                return ''
+            if (!value) { return ''
             } else if (value instanceof Object) {
                 return keys(value)
                 .sort()

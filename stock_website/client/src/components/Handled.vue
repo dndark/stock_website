@@ -8,11 +8,11 @@
             <b-row>
                 <b-col>             
                     <p>年份:</p>
-                    <b-form-select v-model="yearSelected" :options="yearOptions" class="col-md-5"></b-form-select>
+                    <b-form-select v-model="yearSelected" :options="yearOptions"  @change=getItems class="col-md-5"></b-form-select>
                 </b-col>
                 <b-col>
                     <p>姓名:</p>
-                    <b-form-select v-model="nameSelected" :options="nameOptions2" class="col-md-5"></b-form-select>
+                    <b-form-select v-model="nameSelected" :options="nameOptions2" @change=getItems class="col-md-5"></b-form-select>
                 </b-col>
             </b-row>
         </b-container>
@@ -115,27 +115,13 @@ var Handled = {
       },
     }
   },
+  computed:{
+    url(){
+      var url = this.site + "unPayItems?"+'year='+this.yearSelected+"&" + 'name='+this.nameSelected + "&handled=yes"
+      return url
+    }
+  },
   methods:{
-    getItems(){
-      var url = this.site + "unPayItems?";
-      var options = options||{}
-      if ("year" in options){url += 'year='+options.year+"&"}
-      if ("name" in options){url += 'name='+options.name+"&"}
-      url += "handled=yes&"
-      
-      self = this
-      axios.get(url)
-        .then((res) => {
-          self.items = res.data
-          self.currentPage = 1
-          if (self.onceItems.length == 0){
-            self.onceItems = JSON.parse(JSON.stringify(res.data));
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-      });
-    },
     dateFormat2(t){
       // var dateNum =  Date.parse(t);
       if (t){

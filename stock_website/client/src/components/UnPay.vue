@@ -8,11 +8,11 @@
             <b-row>
                 <b-col>             
                     <p>年份:</p>
-                    <b-form-select v-model="yearSelected" :options="yearOptions" @change=reloadItem class="col-md-5"></b-form-select>
+                    <b-form-select v-model="yearSelected" :options="yearOptions"  @change=getItems class="col-md-5"></b-form-select>
                 </b-col>
                 <b-col>
                     <p>姓名:</p>
-                    <b-form-select v-model="nameSelected" :options="nameOptions2" @change=reloadItem class="col-md-5"></b-form-select>
+                    <b-form-select v-model="nameSelected" :options="nameOptions2" @change=getItems class="col-md-5"></b-form-select>
                 </b-col>
             </b-row>
         </b-container>
@@ -114,64 +114,12 @@ var UnPay = {
       },
     }
   },
-  methods:{
-    getItems(){
-      var url = this.site + "unPayItems?";
-      url += 'year='+this.yearSelected+"&" + 'name='+this.nameSelected
-
-      var self = this
-      axios.get(url)
-        .then((res) => {
-          self.items = res.data
-          self.currentPage = 1
-          // onceItem need to be corresponding to the correct year, so if nameSelected 
-          // is all, we could just copy the res.data obj to onceItems. if the nameSelected
-          // is not the all, we need to make one more extract API call, to fetch all user information
-          // this may cause redundant call
-          if (self.nameSelected == "所有人"){
-            self.onceItems = JSON.parse(JSON.stringify(res.data));
-          }else{
-            url = url.replace(self.nameSelected,"所有人")
-            axios.get(url).then((res)=>{self.onceItems = JSON.parse(JSON.stringify(res.data));})
-          }
-          
-        })
-        .catch((error) => {
-          console.log(error);
-      });
-    },
-    // this function call API and update the database
-    postUpdateItem(value){
-      var url = this.site + "updateUnPayItem";
-      var self = this
-      axios.post(url,{
-          handle_score: 10,        
-          sc_code: value.sc_code  
-        })
-        .then((res) => {
-          // deleted the item from page
-          let index = self.items.findIndex(item => item.sc_code ===  value.sc_code) // find the post index 
-          if (index != -1){
-            self.items[index].handle = false
-            self.items.splice(index, 1) //delete the post
-          }
-          // deleted the item from onceItem
-          index = self.onceItems.findIndex(item => item.sc_code ===  value.sc_code) // find the post index 
-          if (index != -1){
-            self.onceItems.splice(index, 1) 
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-      });
-    },
-    reloadItem(value){
-      this.getItems()
-    },
+  computed:{
+    url(){
+      var url = this.site + "unPayItems?"+'year='+this.yearSelected+"&" + 'name='+this.nameSelected
+      return url
+    }
   },
-  // created(){
-  //   this.getItems()
-  // },
   mixins: [UnpayCommon]
 }
 export default UnPay
