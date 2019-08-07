@@ -82,8 +82,8 @@ def unPayItems():
     items = sale_c_joined.filter(and_(
                                     #没收全
                                     #sale_c.sc_reca_money+ sale_c.sc_recr_money < sale_c.sc_item_summoney,
-                                    #收了不到百分50
-                                    sale_c.sc_reca_money+ sale_c.sc_recr_money <  sale_c.sc_item_summoney*0.5,
+                                    #收了不到百分80
+                                    sale_c.sc_reca_money+ sale_c.sc_recr_money <  sale_c.sc_item_summoney*0.98,
                                     name_query,
                                     # 出货超过百分99
                                     #  SaleC.sc_item_out >= 99, 
@@ -97,20 +97,71 @@ def unPayItems():
     for x in items:
         d = x[0].as_dict()
         d.update(x[1].as_dict()) if x[1] else d.update(unpay_d)
+        
         rec_money = d["sc_rec_money"] = d["sc_reca_money"] + d["sc_recr_money"]
         sc_recr_money_prec = 0 if (rec_money == 0) else rec_money/(d["sc_item_summoney"])
-
-
-        # only show items pay less than 98%
-        if sc_recr_money_prec > 0.98:
-            continue
-        else:
-            d["sc_recr_money_prec"] = sc_recr_money_prec
-            d.pop("sc_reca_money")
-            d.pop("sc_recr_money")
+        d["sc_recr_money_prec"] = sc_recr_money_prec
+        d.pop("sc_reca_money")
+        d.pop("sc_recr_money")
 
         items2.append(d)
     return make_response(jsonify(items2))
+
+
+@app.route('/paiedItems', methods=['GET'])
+def paiedItems():
+    # optional argument 
+    year = request.args.get('year')    
+    name = request.args.get('name', "所有人")
+
+    items2 = []
+
+    #set db sale_c = SaleC
+    sale_c = SaleC
+    unpay_sale_status = UnpaySaleStatus
+    if year == "2018":
+        sale_c = SaleC2018
+        unpay_sale_status = UnpaySaleStatus2018
+        
+    query = db.session().query(sale_c, unpay_sale_status)
+    sale_c_joined = query.outerjoin(sale_c, unpay_sale_status.sc_code==sale_c.sc_code)
+
+    # handle_query = or_(unpay_sale_status.handled != 0)
+    
+    #handle status 
+    name_query = sale_c.sc_sponsor is not None
+    if name != "所有人": 
+        name_query = sale_c.sc_sponsor == name
+
+    result = []
+    except_companys = ["北京康瑞明科技有限公司", "太原重工股份有限公司","泰安航天特种车有限公司"]
+    now = datetime.now().date()
+    _60DaysAgo = now - timedelta(days=60)
+    items = sale_c_joined.filter(and_(
+                                    #没收全
+                                    # sale_c.sc_reca_money+ sale_c.sc_recr_money < sale_c.sc_item_summoney,
+                                    #收了超过百分80
+                                    sale_c.sc_reca_money+ sale_c.sc_recr_money > sale_c.sc_item_summoney*0.98,
+                                    name_query,
+                                    # 出货超过百分99
+                                    #  SaleC.sc_item_out >= 99, 
+                                    # 大于60天交货期
+                                    sale_c.sc_appd_date < _60DaysAgo,
+                                    # handle_query,
+                                    sale_c.sc_receive_company.notin_(except_companys)
+                                    )).all()
+    for x in items:
+        d = x[0].as_dict()
+        d.update(x[1].as_dict())
+        rec_money = d["sc_rec_money"] = d["sc_reca_money"] + d["sc_recr_money"]
+        sc_recr_money_prec = 0 if (rec_money == 0) else rec_money/(d["sc_item_summoney"])
+        d["sc_recr_money_prec"] = sc_recr_money_prec
+        d.pop("sc_reca_money")
+        d.pop("sc_recr_money")
+
+        items2.append(d)
+    return make_response(jsonify(items2))
+
 
 @app.route('/unPayItem', methods=['GET'])
 def unPayItem():
@@ -118,7 +169,6 @@ def unPayItem():
     sc_code = request.args.get('sc_code')
     # result = []
     if not sc_code:
-        print(sc_code)
         return abort(404)
     
     year = sc_code.split("-")[0]

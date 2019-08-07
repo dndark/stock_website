@@ -40,30 +40,6 @@ export default {
         rows(){
             return this.items.length
         },
-        // getItems(){
-        //     var url = this.getUrl
-        //     var self = this
-        //     var a = self.nameSelected
-        //     axios.get(url)
-        //         .then((res) => {
-        //         this.items = res.data
-        //         self.currentPage = 1
-        //         // onceItem need to be corresponding to the correct year, so if nameSelected 
-        //         // is all, we could just copy the res.data obj to onceItems. if the nameSelected
-        //         // is not the all, we need to make one more extract API call, to fetch all user information
-        //         // this may cause redundant call
-        //         if (self.nameSelected == "所有人"){
-        //             self.onceItems = JSON.parse(JSON.stringify(res.data));
-        //         }else{
-        //             url = url.replace(self.nameSelected,"所有人")
-        //             axios.get(url).then((res)=>{self.onceItems = JSON.parse(JSON.stringify(res.data));})
-        //         }
-                
-        //         })
-        //         .catch((error) => {
-        //         console.log(error);
-        //     });
-        // },
         nameOptions2(){
             var newList = [{value:"所有人", text:"所有人("+this.onceItems.length+")"}]
             for (var x of this.nameOptions){
@@ -77,7 +53,6 @@ export default {
     },
     methods:{
         getItems(){
-            console.log(123)
             // var url = this.site + "unPayItems?";
             // url += 'year='+this.yearSelected+"&" + 'name='+this.nameSelected
             var url = this.url

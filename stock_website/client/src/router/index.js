@@ -32,6 +32,11 @@ export default new Router({
     name: 'Handled',
     component: resolve => require(["@/components/Handled"],resolve)
   },
+  {
+    path: '/paid',
+    name: 'Paid',
+    component: resolve => require(["@/components/Paid"],resolve)
+  },
   ],
   mode: 'history',
 })
