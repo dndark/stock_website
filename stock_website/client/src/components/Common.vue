@@ -7,7 +7,8 @@ export default {
     data(){
         return{
             // site: 'http://localhost:5000/',
-            site:"/api/",
+            // site:"/api/",
+            site:'',
             
             dismissSecs: 3,
             dismissCountDown: 0,

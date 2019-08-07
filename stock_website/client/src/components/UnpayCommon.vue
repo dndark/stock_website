@@ -6,7 +6,8 @@ export default {
     name:"UnpayCommon",
     data(){
         return{
-            site:"/api/",
+            // site:"/api/",
+            site:'',
             yearOptions: [2019, 2018 ],
             yearSelected: 2019,
             // nameOptions:["所有人","张淑芳","刘伟","李彩霞","韩晓波","任艳红","王婷婷","张艳梅","贾紫娟","常芳萍","李艳茹","徐佳毅","李国栋","张银芳","张海燕","春桥科技"],
