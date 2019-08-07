@@ -44,8 +44,8 @@ var UnPayDetail = {
     return {
       item: {},
       options:[
-        { value: "handled", text:'已完成'},
-        { value: "progress", text:'进行中'},
+        { value: "handled", text:'已处理'},
+        { value: "progress", text:'处理中'},
       ],
       selected: "handled",
       remark:''
