@@ -5,7 +5,6 @@ from flask_sqlalchemy import SQLAlchemy
 from config import config
 
 from . import main
-from . import api
 # configuration
 DEBUG = True
 
