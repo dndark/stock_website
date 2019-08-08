@@ -98,17 +98,6 @@ var UnPayDetail = {
     }
   },
   methods:{
-    dateFormat(t){
-      // var dateNum =  Date.parse(t);
-      if (t){
-          var dateObj = new Date(t);
-          var month = dateObj.getUTCMonth() + 1; //months from 1-12
-          var day = dateObj.getUTCDate();
-          var year = dateObj.getUTCFullYear();
-          return  year + "/" + month + "/" + day;
-      }
-      return ''
-    },
     dateFormat2(t){
       // var dateNum =  Date.parse(t);
       if (t){
@@ -130,16 +119,16 @@ var UnPayDetail = {
           
           this.no_data = false
           self.item = res.data
-          console.log(self.item)
-          // self.currentPage = 1
         })
         .catch((error) => {
-          this.no_data = true
+              if (error.response || error.request) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                this.no_data = true
+              } 
       });
     },
     submit(){
-      console.log(this.selected)
-      
       var today = this.dateFormat(new Date())
       var remark = '';
       var score = 0;
@@ -153,7 +142,7 @@ var UnPayDetail = {
       }else if(this.selected == "progress"){
         score = 5
       }
-      console.log(remark)
+
       var self = this
       axios.post(url,{
           remark: remark,
@@ -166,7 +155,6 @@ var UnPayDetail = {
         })
         .catch((error) => {
           alert("提交失败")
-          console.log(error);
       });
     },
     search(){

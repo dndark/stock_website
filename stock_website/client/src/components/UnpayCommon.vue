@@ -10,7 +10,6 @@ export default {
             site:'',
             yearOptions: [2019, 2018 ],
             yearSelected: 2019,
-            // nameOptions:["所有人","张淑芳","刘伟","李彩霞","韩晓波","任艳红","王婷婷","张艳梅","贾紫娟","常芳萍","李艳茹","徐佳毅","李国栋","张银芳","张海燕","春桥科技"],
             nameOptions:[
                 {value:"张淑芳",text:"张淑芳"},
                 {value:"刘伟",text:"刘伟"},
@@ -39,7 +38,6 @@ export default {
     },
     computed:{
         isAdmin(){
-            console.log(this.userPermission)
             return this.userPermission == "admin"
         },
         rows(){
@@ -78,7 +76,6 @@ export default {
                 }
                 })
                 .catch((error) => {
-                    console.log(error);
             });
         },
         postUpdateItem(value){
@@ -156,7 +153,6 @@ export default {
     created(){
         this.removeHandle()
         this.getItems()
-        console.log(this.userPermission)
     },
 }
 </script>

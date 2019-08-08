@@ -142,7 +142,6 @@ var StockOverDue = {
           this.items = res.data
         })
         .catch((error) => {
-          console.log(error);
       });
     },
     toString(value) {
