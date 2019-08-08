@@ -118,8 +118,18 @@ var UnPay = {
     url(){
       var url = this.site + "unPayItems?"+'year='+this.yearSelected+"&" + 'name='+this.nameSelected
       return url
-    }
+    },
   },
+  // methods:{
+  //   removeHandle(){
+  //     if (this.isAdmin == false){
+  //       delete this.fields.handle
+  //     }
+  //   } 
+  // },
+  // created(){
+  //   this.removeHandle()
+  // },
   mixins: [UnpayCommon]
 }
 export default UnPay

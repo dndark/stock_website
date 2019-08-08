@@ -45,7 +45,6 @@ export default {
                 var month = dateObj.getUTCMonth() + 1; //months from 1-12
                 var day = dateObj.getUTCDate();
                 var year = dateObj.getUTCFullYear();
-                console.log(dateObj)
                 return  year + "/" + month + "/" + day;
             }
             return ''
@@ -65,7 +64,6 @@ export default {
             
             var self = this
             var filePath = e.target
-            console.log(filePath)
             var reader = new FileReader();
             var output = ""; //placeholder for text output
             // only support txt file for now

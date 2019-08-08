@@ -33,10 +33,15 @@ export default {
             items:[],
             // this is copy of items but only render at created
             onceItems:[],
-            itemCount:[]
+            itemCount:[],
+            userPermission:this.getCookie("permission"),
         }
     },
     computed:{
+        isAdmin(){
+            console.log(this.userPermission)
+            return this.userPermission == "admin"
+        },
         rows(){
             return this.items.length
         },
@@ -142,9 +147,16 @@ export default {
             let realVal = parseFloat(value).toFixed(2) +"%"
             return realVal
         },
+        removeHandle(){
+            if (this.isAdmin == false && this.hasOwnProperty("fields") && this.fields.hasOwnProperty("handle")){
+                delete this.fields.handle
+            }
+        } 
     },
     created(){
+        this.removeHandle()
         this.getItems()
+        console.log(this.userPermission)
     },
 }
 </script>

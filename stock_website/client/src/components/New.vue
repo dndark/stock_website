@@ -128,7 +128,6 @@ export default {
       return true
     },
     validObj(obj){
-      console.log(obj)
       if (!obj) return false
       else return true
     },
@@ -177,7 +176,6 @@ export default {
       const path = this.site + "item" + "/id/" + itemID
       axios.get(path)
         .then((res) => {
-          console.log("this item already exist")
         })
         .catch((error) => {
           var item = {"id":itemID, 

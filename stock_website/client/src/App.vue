@@ -44,6 +44,7 @@ Vue.prototype.delCookie =(name) => {
 const store = new Vuex.Store({
   state: {
     logined: getCookie("session"),
+    userInfo:'',
   },
   mutations: {
     //更新用户信息
@@ -52,13 +53,16 @@ const store = new Vuex.Store({
     },
     logout(state){
       state.logined = false;
+    },
+    updateUserInfo(state, user){
+      state.userInfo = user
     }
   }
 })
 
 export default {
   name: 'App',
-  store:store,
+  store,
   components: {
     firstPage,
   }

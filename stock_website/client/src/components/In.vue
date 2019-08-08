@@ -100,7 +100,6 @@ var In = {
   computed:{
     parseURLQuery(){
       var items = this.QueryStringToObject();
-      console.log(items)
       if (items && items.itemID){
         for (var i =0; i < items.itemID.length; i++){
           var id = items.itemID[i];
@@ -112,7 +111,6 @@ var In = {
   },
   methods: {
     onDeleteitem(selectItem) {
-      console.log(this.items);
       var a = this.items.indexOf(selectItem);
       this.items.splice(a, 1);
     },
@@ -152,7 +150,6 @@ var In = {
         .catch((error) => {
         // eslint-disable-next-line
           console.error(error);
-          console.log(path+"path not find")
         });
     },
     submitOrder (){
@@ -164,7 +161,6 @@ var In = {
           this.dismissCountDown = this.dismissSecs
         })
         .catch((error) => {
-        console.log(error);
       });
     },
     

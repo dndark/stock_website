@@ -1,41 +1,62 @@
 <template>
   <div class="container">
     <div class="row">
-      <div class="col-md-12">
-        <h1 style="margin-bottom: 20px; text-align:center" >合同明细</h1>
-
-        <b-container class="bv-example-row">
-          <div v-for="(value, name) in processItem" :key=name>
-            <b-row  style="margin-bottom: 10px">
-              <b-col cols="7">{{name}}</b-col>
-              <b-col cols="5" style="word-wrap:break-word; white-space: pre-line;">{{value}}</b-col>
-            </b-row>
-          </div>
-          <b-row style="margin-bottom:10px" variant="success">
-              <b-col cols="7">处理状态</b-col>
-              <b-col cols="2">
-                <b-form-select v-model="selected">
-                  <option v-for="option in options" v-bind:value="option.value" :key='option.name'> {{ option.text }}</option>
-                </b-form-select>
-                </b-col>
-            </b-row>
-            <b-row style="margin-bottom: 10px" variant="success" >
-              <b-col cols="7">备注</b-col>
-              <b-col cols="5">
-                    <b-form-input v-model="remark"></b-form-input>
-              </b-col>
-            </b-row>
-            <b-col offset-md="11" style="margin-top:40px">
-              <b-button size="lg" variant="success"  v-on:click="submit()">提交</b-button>
+      <div class="col-md-12" v-if='!this.$route.query.sc_code'>
+          <b-row>
+            <b-col class="col-md-2 text-right">
+              输入合同号：
             </b-col>
+            <b-col class="col-md-4">
+              <b-form-input v-model="searchText" placeholder="Search">输入123</b-form-input>
+            </b-col>
+            <b-col offset-md="4" class="col-md-1">
+              <b-button  variant="outline-success" type="submit" v-on:click="search()" >Search</b-button>
+            </b-col>
+          </b-row>
+          <br>
+      </div>
+    
+      <div class="col-md-12" v-if='this.sc_code'>
+        
+        <div v-if="this.no_data">找不到结果</div>
+        <div v-else>
+          <h1 style="margin-bottom: 20px; text-align:center" >合同明细</h1>
+
+          <b-container class="bv-example-row">
+            <div v-for="(value, name) in processItem" :key=name>
+              <b-row  style="margin-bottom: 10px">
+                <b-col cols="7">{{name}}</b-col>
+                <b-col cols="5" style="word-wrap:break-word; white-space: pre-line;">{{value}}</b-col>
+              </b-row>
+            </div>
+            <div class="state" v-show="this.isAdmin">
+              <b-row style="margin-bottom:10px" variant="success">
+                <b-col cols="7">处理状态</b-col>
+                <b-col cols="2">
+                  <b-form-select v-model="selected">
+                    <option v-for="option in options" v-bind:value="option.value" :key='option.name'> {{ option.text }}</option>
+                  </b-form-select>
+                  </b-col>
+              </b-row>
+              <b-row style="margin-bottom: 10px" variant="success" >
+                <b-col cols="7">备注</b-col>
+                <b-col cols="5">
+                      <b-form-input v-model="remark"></b-form-input>
+                </b-col>
+              </b-row>
+              <b-col offset-md="11" style="margin-top:40px">
+                <b-button size="lg" variant="success"  v-on:click="submit()">提交</b-button>
+              </b-col>
+            </div>
         </b-container>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import common from '@/components/Common'
+import UnpayCommon from '@/components/UnpayCommon'
 import axios from 'axios'
 
 var UnPayDetail = {
@@ -48,7 +69,10 @@ var UnPayDetail = {
         { value: "handled", text:'已处理'},
       ],
       selected: "progress",
-      remark:''
+      remark:'',
+      searchText:'',
+      sc_code:this.$route.query.sc_code,
+      no_data: false
     }
   },
   computed:{
@@ -74,7 +98,6 @@ var UnPayDetail = {
     }
   },
   methods:{
-    
     dateFormat(t){
       // var dateNum =  Date.parse(t);
       if (t){
@@ -100,18 +123,18 @@ var UnPayDetail = {
       return ''
     },
     getItem(){
-      var sc_code = this.$route.query.sc_code
-      console.log(sc_code)
-      var url = this.site + "unPayItem?sc_code="+ sc_code ;
+      var url = this.site + "unPayItem?sc_code="+ this.sc_code ;
       var self = this
       axios.get(url)
         .then((res) => {
+          
+          this.no_data = false
           self.item = res.data
           console.log(self.item)
           // self.currentPage = 1
         })
         .catch((error) => {
-          console.log(error);
+          this.no_data = true
       });
     },
     submit(){
@@ -145,13 +168,19 @@ var UnPayDetail = {
           alert("提交失败")
           console.log(error);
       });
-    }
+    },
+    search(){
+      let url = window.location.href
+      url = url +"?sc_code=" + this.searchText
+      this.sc_code =  this.searchText
+      this.getItem()
+      return 
+    },
   },
   created(){
-    console.log(123)
     this.getItem()
   },
-  mixins: [common]
+  mixins: [UnpayCommon]
 }
 export default UnPayDetail
 </script>

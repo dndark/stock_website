@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 Vue.use(Router)
-export default new Router({
+const router = new Router({
   routes: [
   {
     path: '/login',
+    name: 'login',
     component: resolve  => require(["@/components/Login"],resolve)
   }, 
   {
@@ -40,4 +41,14 @@ export default new Router({
   ],
   mode: 'history',
 })
+router.onError((error) => {
+  const pattern = /Loading chunk (\d)+ failed/g;
+  const isChunkLoadFailed = error.message.match(pattern);
+  const targetPath = router.history.pending.fullPath;
+  if (isChunkLoadFailed) {
+   router.replace(targetPath);
+  }
+ });
+ 
+export default router
 

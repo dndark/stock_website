@@ -13,7 +13,8 @@
     </div>
     <div class="log-email">
         <input type="text" placeholder="Email" :class="'log-input' + (account==''?' log-input-empty':'')" v-model="account"><input type="password" placeholder="Password" :class="'log-input' + (password==''?' log-input-empty':'')"  v-model="password">
-        <a href="javascript:;" class="log-btn" @click="login">登录 </a>
+        <!-- <a href="javascript:;" class="log-btn" @click="login">登录 </a> -->
+        <b-button ref='submit' size="lg" class="log-btn" v-on:keyup.enter="login()" @click="login()" >登录</b-button>
     </div>
     <!-- <Loading v-if="isLoging" marginTop="-30%"></Loading> -->
 </div>
@@ -21,6 +22,8 @@
 
 <script>
 // import Loading from './Loading.vue'
+// import md5 from 'js-md5';
+
 export default {
   name: 'Login',
   data(){
@@ -28,7 +31,9 @@ export default {
     //   isLoging: false,
       account: '',
       password: '',
-      isLogined: false
+      isLogined: false,
+      adminList:[{name:'xjy',password:'123456'}],
+      userList:[{name:'jzj',password:'123'},{name:'hxb',password:'123'}]
   	}
   },
   methods:{
@@ -37,50 +42,51 @@ export default {
   		if(this.account!='' && this.password!=''){
   			this.toLogin();
   		}
-  	},
+    },
+    thisFocus(){
+      $('#log-btn').focus();
+    },
   	//登录请求
   	toLogin(){
-  		//一般要跟后端了解密码的加密规则
-  		//这里例子用的哈希算法来自./js/sha1.min.js
-  		// let password_sha = hex_sha1(hex_sha1( this.password ));
-  		// //需要想后端发送的登录参数
-  		// let loginParam = {
-  		// 	account: this.account,
-  		// 	password_sha
-  		// }
-      //设置在登录状态
-    //   this.isLoging = true;
-      
-  		//请求后端,比如:
-  		/*this.$http.post( 'example.com/login.php', {
-  		param: loginParam).then((response) => {
-        if(response.data.code == 1){
-          let expireDays = 1000 * 60 * 60 * 24 * 15;
-          this.setCookie('session', response.data.session, expireDays);
-          //登录成功后
-          this.$router.push('/user_info'); 
+  
+        let session = "login"
+        
+        let userPermission
+        if (this.adminList.filter(item=> item.name == this.account && item.password == this.password).length){
+          userPermission = 'admin' 
+          
+        } else if (this.userList.filter(item=> item.name == this.account && item.password == this.password).length){
+          userPermission = 'notAdmin' 
+        } else{
+          alert("账户密码错误")
+          return
         }
-	    }, (response) => {
-	        //Error
-	    });
-  		*/
-  	   
-      //演示用
-        //登录状态15天后过期
         let expireDays = 1000 * 60 * 60 * 24 * 15;
-        this.setCookie('session','blablablablabla...', expireDays);
+        this.setCookie("permission",userPermission, expireDays);
+        this.setCookie('session',session, expireDays);
+        this.$store.commit('login')
+        
+        this.setCookie('userInfo',this.account, expireDays);
+        this.$store.commit('updateUserInfo',this.account) 
         // this.isLoging = false;
         //登录成功后
-        console.log(window.location.pathname)
         this.$router.push("/");
-        this.$store.commit('login')
-  		
+      
         this.isLogined= true
+        
   	}
-  },
-  created(){
+  },    
+  mounted() {
+    this.$refs.submit.focus();
+    
+    this.delCookie('permission')
     this.delCookie('session');
-  }
+    this.delCookie('userInfo')
+    
+    this.$store.commit('logout')
+  },
+  // created(){
+  // }
 }
 </script>
 
@@ -106,7 +112,7 @@ border-radius: 5px; -webkit-box-shadow:  0px 3px 16px -5px #070707; box-shadow: 
 .close{height:16px;width:16px;background-position:-13px 0;}
 .login-email{height:17px;width:29px;background-position:-117px 0;}
 .log-btns{padding: 15px 0; margin: 0 auto;}
-.log-btn{width:402px; display: block; text-align: left; line-height: 50px;margin:0 auto 15px; height:50px; color:#fff; font-size:13px;-webkit-border-radius: 5px; background-color: #3B5999;
+.log-btn{width:402px; display: block; text-align: left; margin:0 auto 15px; height:50px; color:#fff; font-size:13px;-webkit-border-radius: 5px; background-color: #3B5999;
 -moz-border-radius: 5px;
 -ms-border-radius: 5px;
 -o-border-radius: 5px;
