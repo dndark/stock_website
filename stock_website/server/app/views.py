@@ -8,6 +8,24 @@ import random
 from flask import jsonify, request, abort, make_response
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import or_, and_
+from collections import namedtuple
+
+DBNameTuple = namedtuple('SelectedDB', ['db', 'sale_c', 'unpay_sale_status'])
+
+
+def db_selection(year):
+    print(11111)
+    # this is a help function return a correct db to use
+    # the return type is a nametuple object,
+    # example: obj.sale_c could access the correct sale_c db
+    if year == "2019":
+        return DBNameTuple(db, SaleC, UnpaySaleStatus)
+    elif year == "2018":
+        return DBNameTuple(db2018, SaleC2018, UnpaySaleStatus2018)
+    elif year == "2017":
+        return DBNameTuple(db2017, SaleC2017, UnpaySaleStatus2017)
+    return DBNameTuple(db, SaleC, UnpaySaleStatus)
+    
 
 #####Overdue Item
 @app.route('/OverDueItem', methods=['GET'])
@@ -19,10 +37,8 @@ def OverDueItem():
     # optional argument 
     year = request.args.get('year')
 
-    if year == "2018":
-        Sale_c = SaleC2018
-    else:
-        Sale_c = SaleC
+    db_tuple = db_selection(year)
+    Sale_c = db_tuple.sale_c
 
     # fromDate = datetime.strftime(_90DayAgo, '%Y-%m-%d')
     items = Sale_c.query.filter(and_(Sale_c.sc_appd_date <= _90DayAgo, 
@@ -51,12 +67,10 @@ def unPayItems():
     is_progress = request.args.get('progress')
     name = request.args.get('name', "所有人")
 
-    #set db sale_c = SaleC
-    sale_c = SaleC
-    unpay_sale_status = UnpaySaleStatus
-    if year == "2018":
-        sale_c = SaleC2018
-        unpay_sale_status = UnpaySaleStatus2018
+    db_tuple = db_selection(year)
+    db = db_tuple.db
+    sale_c = db_tuple.sale_c
+    unpay_sale_status = db_tuple.unpay_sale_status
         
     query = db.session().query(sale_c, unpay_sale_status)
     sale_c_joined = query.outerjoin(unpay_sale_status, sale_c.sc_code==unpay_sale_status.sc_code)
@@ -115,14 +129,11 @@ def paiedItems():
     name = request.args.get('name', "所有人")
 
     items2 = []
+    db_tuple = db_selection(year)
+    db = db_tuple.db
+    sale_c = db_tuple.sale_c
+    unpay_sale_status = db_tuple.unpay_sale_status
 
-    #set db sale_c = SaleC
-    sale_c = SaleC
-    unpay_sale_status = UnpaySaleStatus
-    if year == "2018":
-        sale_c = SaleC2018
-        unpay_sale_status = UnpaySaleStatus2018
-        
     query = db.session().query(sale_c, unpay_sale_status)
     sale_c_joined = query.outerjoin(sale_c, unpay_sale_status.sc_code==sale_c.sc_code)
 
@@ -172,13 +183,9 @@ def unPayItem():
         return abort(404)
     
     year = sc_code.split("-")[0]
-    sale_c = SaleC
-    unpay_sale_status = UnpaySaleStatus
-
-    if year == "2018":
-        sale_c = SaleC2018
-        unpay_sale_status = UnpaySaleStatus2018
-        
+    db_tuple = db_selection(year)
+    sale_c = db_tuple.sale_c
+    unpay_sale_status = db_tuple.unpay_sale_status
     
     query = db.session().query(sale_c, unpay_sale_status)
     sale_c_joined = query.outerjoin(unpay_sale_status, sale_c.sc_code==unpay_sale_status.sc_code)
@@ -208,12 +215,10 @@ def updateUnPayItem():
     handle_score = post_data.get("handle_score",0)
 
     year = sc_code.split("-")[0]
-    
-    unpay_sale_status = UnpaySaleStatus
-    _db = db
-    if year == "2018":
-        unpay_sale_status = UnpaySaleStatus2018
-        _db = db2018
+    db_tuple = db_selection(year)
+    _db = db_tuple.db
+    sale_c = db_tuple.sale_c
+    unpay_sale_status = db_tuple.unpay_sale_status
     
     result = unpay_sale_status.query.filter(unpay_sale_status.sc_code == sc_code).first()
     # if find in the unpay table, than update the unpay table
