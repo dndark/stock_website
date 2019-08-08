@@ -38,13 +38,13 @@ def OverDueItem():
     year = request.args.get('year')
 
     db_tuple = db_selection(year)
-    Sale_c = db_tuple.sale_c
+    sale_c = db_tuple.sale_c
 
     # fromDate = datetime.strftime(_90DayAgo, '%Y-%m-%d')
-    items = Sale_c.query.filter(and_(Sale_c.sc_appd_date <= _90DayAgo, 
-                                    Sale_c.sc_item_in > 99, 
-                                    Sale_c.sc_item_out < 99, 
-                                    Sale_c.sc_receive_company != "北京康瑞明科技有限公司")).all()
+    items = sale_c.query.filter(and_(sale_c.sc_appd_date <= _90DayAgo, 
+                                    sale_c.sc_item_in > 99, 
+                                    sale_c.sc_item_out < 99, 
+                                    sale_c.sc_receive_company != "北京康瑞明科技有限公司")).all()
  
     for i in range(len(items)):
         items[i] = items[i].as_dict()
@@ -195,8 +195,7 @@ def unPayItem():
     _60DaysAgo = now - timedelta(days=60)
     item = sale_c_joined.filter(sale_c.sc_code == sc_code).first_or_404()
 
-    unpay_d = {"handled": None,  "id": None, "remark": None }
-    print(item)
+    unpay_d = {"handled": None,  "id": None, "remark": None}
     d = item[0].as_dict()
     d.update(item[1].as_dict()) if item[1] else d.update(unpay_d)
     rec_money = d["sc_rec_money"] = d["sc_reca_money"] + d["sc_recr_money"]
@@ -212,11 +211,11 @@ def updateUnPayItem():
         # don't set the stockNumber when user first input it 
     remark = post_data.get("remark",'')
     sc_code = post_data.get("sc_code")
-    handle_score = post_data.get("handle_score",0)
+    handle_score = post_data.get("handle_score", 0)
 
     year = sc_code.split("-")[0]
     db_tuple = db_selection(year)
-    _db = db_tuple.db
+    db = db_tuple.db
     sale_c = db_tuple.sale_c
     unpay_sale_status = db_tuple.unpay_sale_status
     
@@ -226,11 +225,11 @@ def updateUnPayItem():
         result.handled = handle_score
         result.remark = result.remark + remark
         result.last_modified_date = now
-        _db.session.commit()
+        db.session.commit()
     else:
         uppay_obj = unpay_sale_status(handled = handle_score, sc_code = sc_code, remark = remark, last_modified_date = now)
-        _db.session.add(uppay_obj)
-        _db.session.commit()
+        db.session.add(uppay_obj)
+        db.session.commit()
 
 
     return make_response(jsonify(result= "add success"))
