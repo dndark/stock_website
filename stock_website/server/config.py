@@ -48,15 +48,15 @@ class ProductionConfig(Config):
     #可以通过修改SQLALCHEMY_DATABASE_URI来控制访问不同数据库
     # SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:fengjunguo@192.168.1.223:3306/test?charset=utf8'
     SQLALCHEMY_BINDS = {
-        'ItemStorage': 'mysql+pymysql://root:fengjunguo@192.168.1.223:3306/run_admin_itemstorage?charset=utf8',
-        'DB2019': 'mysql+pymysql://root:fengjunguo@192.168.1.223:3306/run_admin_db_2019?charset=utf8',
-        'DB2018': 'mysql+pymysql://root:fengjunguo@192.168.1.223:3306/run_admin_db_2018?charset=utf8',
+        'ItemStorage': 'mysql+pymysql://root:fengjunguo@0.0.0.0:3306/run_admin_itemstorage?charset=utf8',
+        'DB2019': 'mysql+pymysql://root:fengjunguo@0.0.0.0:3306/run_admin_db_2019?charset=utf8',
+        'DB2018': 'mysql+pymysql://root:fengjunguo@0.0.0.0:3306/run_admin_db_2018?charset=utf8',
     }
 
 
 # 设置配置映射
 config = {
-    'production': DevelopmentConfig,
-    'default': DevelopmentConfig
+    'production': ProductionConfig,
+    'default': ProductionConfig
     # 'ItemStorage':ItemStorage
 }

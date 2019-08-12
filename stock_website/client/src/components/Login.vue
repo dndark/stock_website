@@ -32,8 +32,8 @@ export default {
       account: '',
       password: '',
       isLogined: false,
-      adminList:[{name:'xjy',password:'123456'},{name:'hxb',password:'123'}],
-      userList:[{name:'jzj',password:'123'}]
+      adminList:[{name:'xjy',password:'123456'},{name:'admin',password:'admin'}],
+      userList:[{name:'jzj',password:'123'},{name:'hxb',password:'123'}]
   	}
   },
   methods:{
