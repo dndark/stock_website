@@ -7,7 +7,7 @@
               输入合同号：
             </b-col>
             <b-col class="col-md-4">
-              <b-form-input v-model="searchText" placeholder="Search">输入123</b-form-input>
+              <b-form-input v-model="searchText" placeholder="Search"></b-form-input>
             </b-col>
             <b-col offset-md="4" class="col-md-1">
               <b-button  variant="outline-success" type="submit" v-on:click="search()" >Search</b-button>

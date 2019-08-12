@@ -54,7 +54,6 @@ export default {
         let userPermission
         if (this.adminList.filter(item=> item.name == this.account && item.password == this.password).length){
           userPermission = 'admin' 
-          
         } else if (this.userList.filter(item=> item.name == this.account && item.password == this.password).length){
           userPermission = 'notAdmin' 
         } else{
