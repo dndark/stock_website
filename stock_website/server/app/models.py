@@ -78,26 +78,6 @@ class SaleCParent(parent):
     sc_reca_money = db.Column(db.DECIMAL(11,1))
     sc_recr_money = db.Column(db.DECIMAL(11,1))
 
-class sale_c_sp(parent):  
-    sc_id = db.Column(db.String(60), primary_key=True)
-    sc_code = db.Column(db.String(50))
-    sc_sign_date = db.Column(db.DateTime) 
-    sc_appd_date = db.Column(db.DateTime) 
-    sc_ship_period = db.Column(db.Integer) 
-    sc_item_in = db.Column(db.DECIMAL(11,1))
-    sc_item_out = db.Column(db.DECIMAL(11,1))
-    sc_receive_company = db.Column(db.String(50))
-    sc_sponsor =  db.Column(db.String(50))
-    sc_item_summoney = db.Column(db.DECIMAL(11,1))
-    sc_reca_money = db.Column(db.DECIMAL(11,1))
-    sc_recr_money = db.Column(db.DECIMAL(11,1))
-    remark = db.Column(db.String(50))
-    # 0 represent not handle yet, 10 represent fully handle
-    # 5 represent still watching
-    handled = db.Column(db.Integer) 
-    # id = db.Column(db.String(60), primary_key=True)
-    
-    sc_code = db.Column(db.String(50))
 
 class SaleC(db.Model,SaleCParent):
     __tablename__ = 'sale_c'

@@ -89,20 +89,23 @@ def unPayItems():
         name_query = sale_c.sc_sponsor == name
 
     result = []
-    except_companys = ["北京康瑞明科技有限公司", "太原重工股份有限公司","泰安航天特种车有限公司"]
+    # except_companys = ["北京康瑞明科技有限公司", "太原重工股份有限公司","泰安航天特种车有限公司"]
+    except_sponsorList = ['春桥科技']
+    except_companys = []
     now = datetime.now().date()
-    _60DaysAgo = now - timedelta(days=60)
+    _90DaysAgo = now - timedelta(days=90)
     items = sale_c_joined.filter(and_(
                                     #没收全
                                     #sale_c.sc_reca_money+ sale_c.sc_recr_money < sale_c.sc_item_summoney,
                                     #收了不到百分80
-                                    sale_c.sc_reca_money+ sale_c.sc_recr_money <  sale_c.sc_item_summoney*0.98,
+                                    sale_c.sc_reca_money+ sale_c.sc_recr_money <  sale_c.sc_item_summoney*0.97,
                                     name_query,
                                     # 出货超过百分99
                                     #  SaleC.sc_item_out >= 99, 
                                     # 大于60天交货期
-                                    sale_c.sc_appd_date < _60DaysAgo,
+                                    sale_c.sc_appd_date < _90DaysAgo,
                                     handle_query,
+                                    sale_c.sc_sponsor.notin_(except_sponsorList),
                                     sale_c.sc_receive_company.notin_(except_companys))).all()
 
     items2=[]
@@ -146,17 +149,17 @@ def paiedItems():
     result = []
     except_companys = ["北京康瑞明科技有限公司", "太原重工股份有限公司","泰安航天特种车有限公司"]
     now = datetime.now().date()
-    _60DaysAgo = now - timedelta(days=60)
+    _90DaysAgo = now - timedelta(days=90)
     items = sale_c_joined.filter(and_(
                                     #没收全
                                     # sale_c.sc_reca_money+ sale_c.sc_recr_money < sale_c.sc_item_summoney,
                                     #收了超过百分80
-                                    sale_c.sc_reca_money+ sale_c.sc_recr_money > sale_c.sc_item_summoney*0.98,
+                                    sale_c.sc_reca_money+ sale_c.sc_recr_money > sale_c.sc_item_summoney*0.97,
                                     name_query,
                                     # 出货超过百分99
                                     #  SaleC.sc_item_out >= 99, 
                                     # 大于60天交货期
-                                    sale_c.sc_appd_date < _60DaysAgo,
+                                    sale_c.sc_appd_date < _90DaysAgo,
                                     # handle_query,
                                     sale_c.sc_receive_company.notin_(except_companys)
                                     )).all()
@@ -190,8 +193,6 @@ def unPayItem():
     sale_c_joined = query.outerjoin(unpay_sale_status, sale_c.sc_code==unpay_sale_status.sc_code)
 
     result = []
-    now = datetime.now().date()
-    _60DaysAgo = now - timedelta(days=60)
     item = sale_c_joined.filter(sale_c.sc_code == sc_code).first_or_404()
 
     unpay_d = {"handled": None,  "id": None, "remark": None}

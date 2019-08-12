@@ -24,7 +24,7 @@ export default {
                 {value:"张银芳",text:"张银芳"},
                 {value:"张海燕",text:"张海燕"},
                 {value:"徐佳毅",text:"徐佳毅"},
-                {value:"春桥科技",text:"春桥科技"},
+                // {value:"春桥科技",text:"春桥科技"},
             ],
 
             nameSelected:"所有人",
