@@ -11,6 +11,7 @@ DEBUG = True
 # instantiate the app
 app = Flask(__name__)
 app = Flask(__name__,template_folder="templates",static_folder="static",static_url_path="/server/app/static")
+app.url_map.strict_slashes = False
 
 # enable CORS
 CORS(app)
