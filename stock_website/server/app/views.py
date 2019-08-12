@@ -10,14 +10,13 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import or_, and_
 from collections import namedtuple
 
-DBNameTuple = namedtuple('SelectedDB', ['db', 'sale_c', 'unpay_sale_status'])
 
 
 def db_selection(year):
-    print(11111)
     # this is a help function return a correct db to use
     # the return type is a nametuple object,
     # example: obj.sale_c could access the correct sale_c db
+    DBNameTuple = namedtuple('SelectedDB', ['db', 'sale_c', 'unpay_sale_status'])
     if year == "2019":
         return DBNameTuple(db, SaleC, UnpaySaleStatus)
     elif year == "2018":

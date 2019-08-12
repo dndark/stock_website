@@ -61,6 +61,7 @@ export default {
           alert("账户密码错误")
           return
         }
+        // 15天
         let expireDays = 1000 * 60 * 60 * 24 * 15;
         this.setCookie("permission",userPermission, expireDays);
         this.setCookie('session',session, expireDays);
