@@ -147,7 +147,9 @@ def paiedItems():
         name_query = sale_c.sc_sponsor == name
 
     result = []
-    except_companys = ["北京康瑞明科技有限公司", "太原重工股份有限公司","泰安航天特种车有限公司"]
+    # except_companys = ["北京康瑞明科技有限公司", "太原重工股份有限公司","泰安航天特种车有限公司"]
+    except_companys = []
+    except_sponsorList = ['春桥科技']
     now = datetime.now().date()
     _90DaysAgo = now - timedelta(days=90)
     items = sale_c_joined.filter(and_(
@@ -161,6 +163,7 @@ def paiedItems():
                                     # 大于60天交货期
                                     sale_c.sc_appd_date < _90DaysAgo,
                                     # handle_query,
+                                    sale_c.sc_sponsor.notin_(except_sponsorList),
                                     sale_c.sc_receive_company.notin_(except_companys)
                                     )).all()
     for x in items:
