@@ -4,12 +4,13 @@ from .models import SaleC, SaleC2018, SaleC2017
 from .models import UnpaySaleStatus, UnpaySaleStatus2018, UnpaySaleStatus2017
 from datetime import datetime, timedelta
 
-import random
 from flask import jsonify, request, abort, make_response
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import or_, and_
 from collections import namedtuple
 
+import random
+import json
 
 
 def db_selection(year):
@@ -25,6 +26,31 @@ def db_selection(year):
         return DBNameTuple(db2017, SaleC2017, UnpaySaleStatus2017)
     return DBNameTuple(db, SaleC, UnpaySaleStatus)
     
+
+@app.route('/Login', methods=['POST'])
+def Login():
+    # init
+    user_info = []
+    result = {"isLogined":False, "user":None}
+    post_data = request.get_json()
+
+    #load username and password from request
+    username = post_data.get("username")
+    password = post_data.get("password")
+    
+    user_info_file = 'userInfo.json'
+    with open(user_info_file, 'r', encoding='utf-8') as f:
+        users_info = json.loads(f.read())
+    
+    
+    for user in users_info:
+        if user["username"] == username and user["password"] == password:
+            user.pop("password")
+            result["user"] = user
+            result["isLogined"] = True
+    
+    return make_response(jsonify(result))
+        
 
 #####Overdue Item
 @app.route('/OverDueItem', methods=['GET'])

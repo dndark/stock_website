@@ -21,8 +21,9 @@
 </template>
 
 <script>
-// import Loading from './Loading.vue'
-// import md5 from 'js-md5';
+import axios from 'axios'
+import common from '@/components/Common'
+
 
 export default {
   name: 'Login',
@@ -32,8 +33,8 @@ export default {
       account: '',
       password: '',
       isLogined: false,
-      adminList:[{name:'xjy',password:'123456'},{name:'hxb',password:'123'}],
-      userList:[{name:'jzj',password:'123'}]
+      // adminList:[{name:'xjy',password:'123456'},{name:'hxb',password:'123'}],
+      // userList:[{name:'jzj',password:'123'}]
   	}
   },
   methods:{
@@ -48,32 +49,32 @@ export default {
     },
   	//登录请求
   	toLogin(){
-  
-        let session = "login"
-        
-        let userPermission
-        if (this.adminList.filter(item=> item.name == this.account && item.password == this.password).length){
-          userPermission = 'admin' 
-        } else if (this.userList.filter(item=> item.name == this.account && item.password == this.password).length){
-          userPermission = 'notAdmin' 
-        } else{
-          alert("账户密码错误")
-          return
-        }
-        // 15天
-        let expireDays = 1000 * 60 * 60 * 24 * 15;
-        this.setCookie("permission",userPermission, expireDays);
-        this.setCookie('session',session, expireDays);
-        this.$store.commit('login')
-        
-        this.setCookie('userInfo',this.account, expireDays);
-        this.$store.commit('updateUserInfo',this.account) 
-        // this.isLoging = false;
-        //登录成功后
-        this.$router.push("/");
-      
-        this.isLogined= true
-        
+        let payload = {"username":this.account, "password":this.password}
+        let path = this.site+'/Login'
+        axios.post(path, payload)
+        .then((res) => {
+          res = res.data
+          if (res.isLogined == true){
+            let session = "login"
+            let userPermission = res.user.user_group
+            
+            // 15天
+            let expireDays = 1000 * 60 * 60 * 24 * 15;
+            this.setCookie("permission",userPermission, expireDays);
+            this.setCookie('session',session, expireDays);
+            this.$store.commit('login')
+            
+            this.setCookie('userInfo', res.user.name, expireDays);
+            this.$store.commit('updateUserInfo', res.user.name) 
+            // this.isLoging = false;
+            //登录成功后
+            this.$router.push("/");
+          
+            this.isLogined= true
+          }else{
+            alert("用户名或密码错误")
+          }
+        })
   	}
   },    
   mounted() {
@@ -85,8 +86,7 @@ export default {
     
     this.$store.commit('logout')
   },
-  // created(){
-  // }
+  mixins: [common],
 }
 </script>
 
