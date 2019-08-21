@@ -1,0 +1,7 @@
+[
+    {"username":"xjy", "password":"123456"},
+    {"username":"clx", "password":"clx", "user_group":"admin", "name":"陈亮旭"},
+    {"username":"clx1", "password":"clx1", "user_group":"user", "name":"陈亮旭2"},
+    {"username":"clx2", "password":"clx2", "user_group":"user", "name":"陈亮3"},
+    {"username":"haha", "password":"haha", "user_group":"user", "name":"陈亮3"}
+]
