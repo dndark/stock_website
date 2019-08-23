@@ -9,6 +9,11 @@ const router = new Router({
     component: resolve  => require(["@/components/Login"],resolve)
   }, 
   {
+    path: '/register',
+    name: 'Register',
+    component:  resolve => require(["@/components/Register"],resolve)
+  },
+  {
     path: '/stockOverDue',
     name: 'StockOverDue',
     component: resolve => require(["@/components/StockOverDue"],resolve)

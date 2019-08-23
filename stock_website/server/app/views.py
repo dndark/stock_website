@@ -9,6 +9,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import or_, and_
 from collections import namedtuple
 
+import os
+import time
 import random
 import json
 
@@ -25,12 +27,24 @@ def db_selection(year):
     elif year == "2017":
         return DBNameTuple(db2017, SaleC2017, UnpaySaleStatus2017)
     return DBNameTuple(db, SaleC, UnpaySaleStatus)
-    
+
+lock_file = "lock.tmp"    
+def lock_file_exist():
+    return os.path.exists(lock_file)
+
+def create_lock_file():
+    f = open(lock_file, 'w', encoding='utf-8')
+    f.close()
+    return
+
+def remove_lock_file():
+    os.remove(lock_file)
+    return
 
 @app.route('/Login', methods=['POST'])
 def Login():
     # init
-    user_info = []
+    users_info = []
     result = {"isLogined":False, "user":None}
     post_data = request.get_json()
 
@@ -52,7 +66,50 @@ def Login():
     return make_response(jsonify(result))
         
 
-#####Overdue Item
+
+@app.route('/Register', methods=['POST'])
+def Register():
+    # init
+    users_info = []
+    result = {"register_status":False, "message":None}
+    post_data = request.get_json()
+
+    #load username and password from request
+    username = post_data.get("username")
+    password = post_data.get("password")
+    name = post_data.get("name")
+
+    user_info_file = 'userInfo.json'
+    with open(user_info_file, 'r', encoding='utf-8') as f:
+        try:
+            users_info = json.loads(f.read())
+        except:
+            users_info = []
+            
+    for user in users_info:
+        if user["username"] == username:
+            result["message"] = "用户名已存在"
+            return make_response(jsonify(result))
+    
+    # try tree time, to see if the lock file is being use by other thread 
+    for i in range(3):
+        if lock_file_exist():
+            time.sleep(1000)
+        else:
+            create_lock_file()
+            user = {"username": username, "password": password, "user_group":"user", "name":name}
+            with open(user_info_file, 'w', encoding='utf-8') as f:
+                users_info.append(user)
+                json.dump(users_info, f,indent=4)
+            remove_lock_file()
+
+            result["register_status"]= True
+            return make_response(jsonify(result))
+    
+    result["message"] = "无法解锁，稍后重试"
+    return make_response(jsonify(result))
+        
+#####Overdue Itemf
 @app.route('/OverDueItem', methods=['GET'])
 def OverDueItem():
     result = []
