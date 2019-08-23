@@ -15,7 +15,7 @@
         <input type="text" placeholder="Email" :class="'log-input' + (account==''?' log-input-empty':'')" v-model="account"><input type="password" placeholder="Password" :class="'log-input' + (password==''?' log-input-empty':'')"  v-model="password">
         <!-- <a href="javascript:;" class="log-btn" @click="login">登录 </a> -->
         <b-button ref='submit' size="lg" class="log-btn" v-on:keyup.enter="login()" @click="login()" >登录</b-button>
-        <a href="" @click="register()">注册</a>
+        <a @click="register()" href=#>注册</a>
     
     </div>
     <!-- <Loading v-if="isLoging" marginTop="-30%"></Loading> -->

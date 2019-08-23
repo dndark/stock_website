@@ -106,7 +106,7 @@ export default {
                         message: '注册成功',
                         duration: 800
                     });
-                    sleep(1000)
+                    sleep(1500)
                     self.$router.push('/login');
                 }
                 else{
