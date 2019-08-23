@@ -1,0 +1,15 @@
+./__pycache__/
+./app/__init__.pyc
+./app/__pycache__/
+./app/main/__pycache__/
+./app/main/static/
+./app/templates/
+./bin/
+./cmd
+./gunicorn.log
+./lib/
+./lib64
+./pip-selfcheck.json
+./pyvenv.cfg
+./screenlog.0
+./share/
