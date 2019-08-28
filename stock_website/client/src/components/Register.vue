@@ -71,11 +71,11 @@ export default {
    },
    rules: {
     name: [
-    { required: true, min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
+    { required: true, min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur' }
     ],
     username: [
      { required: true, message: '请输入您的用户名', trigger: 'blur' },
-     { min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }
+     { min: 2, max: 15, message: '长度在 2 到 15 个字符', trigger: 'blur' }
     ],
     pass: [
      { required: true, validator: validatePass, trigger: 'blur' }
